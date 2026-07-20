@@ -1,6 +1,6 @@
 import TimeService from './services/TimeService.js';
 import StorageService from './services/StorageService.js';
-import DualClockComponent from './components/DualClockComponent.js';
+import TimeScrubComponent from './components/TimeScrubComponent.js';
 import WaitlistComponent from './components/WaitlistComponent.js';
 import ScrollRevealComponent from './components/ScrollRevealComponent.js';
 
@@ -14,7 +14,7 @@ class App {
     this.storageService = new StorageService();
     this.anime = typeof window !== 'undefined' ? window.anime : null;
 
-    this.dualClock = new DualClockComponent({
+    this.timeScrub = new TimeScrubComponent({
       timeService: this.timeService
     });
 
@@ -33,7 +33,7 @@ class App {
    * Initializes all application components.
    */
   init() {
-    this.dualClock.start();
+    this.timeScrub.init();
     this.waitlist.init();
     this.scrollReveal.init();
   }

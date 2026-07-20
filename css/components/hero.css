@@ -22,12 +22,16 @@
 }
 
 .half.night {
-  background: linear-gradient(160deg, var(--night-1), var(--night-2));
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--night-1), var(--day-1) calc(var(--night-brightness, 0) * 25%)),
+    var(--night-2));
   animation: slide-in-left 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .half.day {
-  background: linear-gradient(160deg, var(--day-1), var(--day-2));
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--day-1), var(--night-1) calc((1 - var(--day-brightness, 1)) * 30%)),
+    var(--day-2));
   animation: slide-in-right 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -42,7 +46,8 @@
     radial-gradient(1.5px 1.5px at 30% 80%, #fff, transparent),
     radial-gradient(1px 1px at 90% 40%, #fff, transparent),
     radial-gradient(1px 1px at 10% 55%, #fff, transparent);
-  opacity: 0.55;
+  opacity: calc((1 - var(--night-brightness, 0)) * 0.55);
+  transition: opacity 0.4s ease;
 }
 
 /* Star twinkle animation layers */
@@ -78,8 +83,9 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 75% 20%, var(--day-glow) 0%, transparent 55%);
-  opacity: 0.7;
+  opacity: calc(var(--day-brightness, 1) * 0.7);
   animation: breathe 6s ease-in-out infinite;
+  transition: opacity 0.4s ease;
 }
 
 @keyframes breathe {
@@ -213,6 +219,51 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   opacity: 0;
   animation: seam-fade-in 0.6s ease-out 0.85s both;
+  pointer-events: none;
+}
+
+/* Interactive Time Rail Slider */
+.time-scrub {
+  position: absolute;
+  inset: -10px -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 20px);
+  opacity: 0;
+  cursor: grab;
+  z-index: 30;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.time-scrub:active {
+  cursor: grabbing;
+}
+
+.scrub-hint {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(19, 27, 50, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0.75;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 25;
+}
+
+.seam:hover .scrub-hint {
+  opacity: 1;
 }
 
 @keyframes slide-in-left {
