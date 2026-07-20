@@ -1,0 +1,27 @@
+:root {
+  /* Dark / Night Palette */
+  --night-1: #131b32;
+  --night-2: #243256;
+  --night-glow: #5b6fa8;
+
+  /* Warm / Day Palette */
+  --day-1: #f4c669;
+  --day-2: #e8a33d;
+  --day-glow: #fff3d6;
+
+  /* Neutral Paper & Ink Tokens */
+  --paper: #f1ead9;
+  --paper-2: #e8dfc9;
+  --ink: #1f2823;
+  --ink-soft: #5a6459;
+  --line: rgba(31, 40, 35, 0.14);
+
+  /* Accent Green Tokens */
+  --green: #5c7a52;
+  --green-dark: #455e3d;
+
+  /* Typography Families */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Public Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}

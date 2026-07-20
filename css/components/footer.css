@@ -1,0 +1,10 @@
+/* Footer Block */
+footer {
+  padding: 24px 6vw 40px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}

@@ -1,0 +1,29 @@
+/* Narrative Gap Section Block */
+.gap {
+  padding: min(14vw, 140px) 6vw;
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.gap-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green-dark);
+  margin-bottom: 18px;
+}
+
+.gap p {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.gap strong {
+  font-weight: 600;
+  font-style: italic;
+}

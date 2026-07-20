@@ -1,0 +1,23 @@
+/* Navigation Block */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 6vw;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  mix-blend-mode: difference;
+  color: #fff;
+  pointer-events: none;
+}
+
+.nav span {
+  pointer-events: auto;
+}

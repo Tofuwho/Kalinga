@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalinga — Their morning. Your midnight. Still there.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Central CSS Manifest -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <span>kalinga</span>
+    <span id="nav-time"></span>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="half night">
+        <div class="stars"></div>
+        <svg class="celestial" viewBox="0 0 64 64" fill="none">
+          <path d="M42 8C30 8 20 18 20 30C20 42 30 52 42 52C45 52 48 51 50 50C43 47 38 40 38 32C38 22 45 14 54 12C50 9 46 8 42 8Z" fill="#f5f6ff" opacity="0.9"/>
+        </svg>
+        <div class="city-block">
+          <div class="city-name">Riyadh — Parent's shift</div>
+          <div class="clock" id="clock-night">--:--:--</div>
+          <div class="day-label" id="date-night">—</div>
+        </div>
+      </div>
+      <div class="seam"></div>
+      <div class="half day">
+        <div class="sunrays"></div>
+        <svg class="celestial" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="14" fill="#3b2705" opacity="0.85"/>
+          <g stroke="#3b2705" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+            <line x1="32" y1="4" x2="32" y2="12"/><line x1="32" y1="52" x2="32" y2="60"/>
+            <line x1="4" y1="32" x2="12" y2="32"/><line x1="52" y1="32" x2="60" y2="32"/>
+            <line x1="12" y1="12" x2="17.5" y2="17.5"/><line x1="46.5" y1="46.5" x2="52" y2="52"/>
+            <line x1="12" y1="52" x2="17.5" y2="46.5"/><line x1="46.5" y1="17.5" x2="52" y2="12"/>
+          </g>
+        </svg>
+        <div class="city-block">
+          <div class="city-name">Manila — Child's day</div>
+          <div class="clock" id="clock-day">--:--:--</div>
+          <div class="day-label" id="date-day">—</div>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="hero-eyebrow">Kalinga · for families working across the distance</div>
+        <h1 class="hero-title">Their morning.<br><em>Your midnight.</em><br>Still there.</h1>
+        <p class="hero-sub">A bedtime story you record on your break in Riyadh lands exactly at bedtime in Manila — on their clock, not yours.</p>
+      </div>
+
+      <div class="scroll-cue">
+        <span>Scroll</span>
+        <span class="line"></span>
+      </div>
+    </section>
+
+    <!-- Narrative Gap Section -->
+    <section class="gap">
+      <div class="gap-eyebrow">The distance is real</div>
+      <p>Millions of Filipino parents work a full day away in time zone alone, before the plane ticket ever enters the picture. <strong>Kalinga doesn't close that gap</strong> — it just makes sure your presence still arrives on schedule.</p>
+    </section>
+
+    <!-- Feature Highlights -->
+    <section class="features">
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg viewBox="0 0 44 44" fill="none">
+            <rect x="4" y="8" width="36" height="24" rx="3" stroke="#455e3d" stroke-width="2"/>
+            <path d="M12 16H32M12 22H26" stroke="#455e3d" stroke-width="2" stroke-linecap="round"/>
+            <path d="M14 32L10 38V32H14Z" fill="#455e3d"/>
+          </svg>
+        </div>
+        <div>
+          <div class="feature-name">01 · Shared Timeline</div>
+          <h3 class="feature-title">One feed, two ends of a day</h3>
+          <p class="feature-desc">The caregiver at home posts what actually happened — the scraped knee, the spelling test, the nap that went long. The parent abroad reacts and replies whenever their shift allows. No pressure to be online at the same time.</p>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg viewBox="0 0 44 44" fill="none">
+            <circle cx="22" cy="22" r="16" stroke="#455e3d" stroke-width="2"/>
+            <path d="M16 22C16 22 18 17 22 17C26 17 26 27 30 27C34 27 30 22 30 22" stroke="#455e3d" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="feature-name">02 · Async Presence</div>
+          <h3 class="feature-title">Record now, arrive on their time</h3>
+          <p class="feature-desc">A bedtime message recorded during a lunch break in Riyadh is delivered at bedtime in Manila — not the moment it's sent. Presence, scheduled around the child's day rather than the parent's.</p>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg viewBox="0 0 44 44" fill="none">
+            <path d="M10 30L28 12L34 18L16 36H10V30Z" stroke="#455e3d" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M23 17L29 23" stroke="#455e3d" stroke-width="2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="feature-name">03 · Find Your Words</div>
+          <h3 class="feature-title">Help starting, never help pretending</h3>
+          <p class="feature-desc">When you don't know how to say it, Kalinga offers a starting line — never a finished message. It nudges you toward your own words. It doesn't write the moment for you.</p>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-icon">
+          <svg viewBox="0 0 44 44" fill="none">
+            <path d="M4 22C4 22 12 10 22 10C32 10 40 22 40 22C40 22 32 34 22 34C12 34 4 22 4 22Z" stroke="#455e3d" stroke-width="2"/>
+            <circle cx="22" cy="22" r="5" stroke="#455e3d" stroke-width="2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="feature-name">04 · Honest Presence</div>
+          <h3 class="feature-title">Gaps stay visible, on purpose</h3>
+          <p class="feature-desc">A quiet week shows up as a quiet week — to you, not just to the caregiver. Kalinga won't let a scheduled message stand in for a parent who's checked out. It's built to be a habit worth keeping, not an alibi.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Early Access Waitlist -->
+    <section class="waitlist">
+      <div class="waitlist-inner">
+        <h2>Be first to try it</h2>
+        <p>Kalinga is still being built and tested with OFW families. Leave your email and we'll reach out when early access opens.</p>
+        <form class="waitlist-form" id="waitlist-form">
+          <input type="email" id="waitlist-email" placeholder="you@email.com" required aria-label="Email address">
+          <button type="submit" id="waitlist-submit">Join the list</button>
+        </form>
+        <div class="waitlist-status" id="waitlist-status"></div>
+        <div class="waitlist-count" id="waitlist-count"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>kalinga · built for families keeping the distance, not letting it win</footer>
+
+  <!-- Application Entry Point -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
