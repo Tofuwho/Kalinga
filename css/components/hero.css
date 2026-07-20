@@ -204,21 +204,38 @@
 @media (max-width: 640px) {
   .hero {
     flex-direction: column;
-    min-height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
   .half {
     min-height: 50vh;
     min-height: 50dvh;
-    padding: 28px 20px;
+    padding: 24px 20px;
+  }
+  .half.night {
+    justify-content: flex-start;
+    padding-top: max(60px, calc(44px + env(safe-area-inset-top)));
+  }
+  .half.day {
     justify-content: flex-end;
+    padding-bottom: max(28px, calc(20px + env(safe-area-inset-bottom)));
   }
   .night .celestial {
-    top: 60px;
-    right: 16px;
+    top: max(56px, calc(40px + env(safe-area-inset-top)));
+    right: 20px;
+    left: auto;
+    width: 40px;
+    height: 40px;
   }
   .day .celestial {
-    top: 60px;
-    left: 16px;
+    bottom: max(28px, calc(20px + env(safe-area-inset-bottom)));
+    right: 20px;
+    left: auto;
+    width: 40px;
+    height: 40px;
+  }
+  .clock {
+    font-size: clamp(1.8rem, 7vw, 2.4rem);
   }
   .seam {
     left: 0;
@@ -233,7 +250,14 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 88vw;
+    width: 90vw;
+  }
+  .hero-title {
+    font-size: clamp(1.4rem, 5.5vw, 2.1rem);
+  }
+  .hero-sub {
+    font-size: clamp(0.8rem, 3.2vw, 0.95rem);
+    margin-top: 10px;
   }
   .scroll-cue {
     display: none;
