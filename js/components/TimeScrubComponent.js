@@ -1,14 +1,14 @@
 /**
  * TimeScrubComponent
- * Enables interactive dragging across 24 hours (0..1439 minutes).
- * Live-computes time for Manila (UTC+8) and Riyadh (UTC+3), updates clocks,
- * and dynamically calculates independent day/night sky brightness for both cities.
+ * Interactive time scrubbing across 24 hours with orientation-aware pointer dragging.
+ * Computes live dates, clocks, and independent sky brightness for Manila (UTC+8) and Riyadh (UTC+3).
  */
 export default class TimeScrubComponent {
   constructor({
     timeService,
     heroSelector = '.hero',
     sliderSelector = '.time-scrub',
+    backToNowId = 'back-to-now',
     clockNightId = 'clock-night',
     dateNightId = 'date-night',
     clockDayId = 'clock-day',
@@ -20,6 +20,7 @@ export default class TimeScrubComponent {
     this.timeService = timeService;
     this.hero = document.querySelector(heroSelector);
     this.slider = document.querySelector(sliderSelector);
+    this.backToNowEl = document.getElementById(backToNowId);
     this.nightOffset = nightOffset;
     this.dayOffset = dayOffset;
     this.liveMode = true;
@@ -44,15 +45,14 @@ export default class TimeScrubComponent {
   }
 
   /**
-   * Renders Manila and Riyadh clocks + sky brightness at specific Manila minute (0..1439)
+   * Renders Manila and Riyadh clocks, dates, and sky brightness for any Manila minute (0..1439).
    * @param {number} manilaMinutes
    */
   render(manilaMinutes) {
-    // Offset calculation: Manila is UTC+8, Riyadh is UTC+3 (5 hours = 300 minutes behind Manila)
     const offsetMinutes = (this.dayOffset - this.nightOffset) * 60;
     const riyadhMinutes = (manilaMinutes - offsetMinutes + 1440) % 1440;
 
-    // Set brightness variables on .hero container
+    // 1. Sky brightness calculation
     if (this.hero) {
       const manilaB = this.brightnessAt(manilaMinutes).toFixed(2);
       const riyadhB = this.brightnessAt(riyadhMinutes).toFixed(2);
@@ -60,20 +60,25 @@ export default class TimeScrubComponent {
       this.hero.style.setProperty('--night-brightness', riyadhB);
     }
 
-    // Format time strings
+    // 2. Compute live date objects for calendar day boundary changes
+    const now = new Date();
+    const manilaDate = new Date(now);
+    manilaDate.setHours(Math.floor(manilaMinutes / 60), Math.floor(manilaMinutes % 60), 0);
+
+    const riyadhDate = new Date(manilaDate.getTime() - (offsetMinutes * 60000));
+
+    // 3. Format clocks and date labels
     const manilaTime = this.minutesToTimeString(manilaMinutes);
     const riyadhTime = this.minutesToTimeString(riyadhMinutes);
 
     if (this.clockDayEl) this.clockDayEl.textContent = manilaTime;
     if (this.clockNightEl) this.clockNightEl.textContent = riyadhTime;
 
+    if (this.dateDayEl) this.dateDayEl.textContent = this.timeService.formatDate(manilaDate);
+    if (this.dateNightEl) this.dateNightEl.textContent = this.timeService.formatDate(riyadhDate);
+
     if (this.navTimeEl) {
       this.navTimeEl.textContent = `${manilaTime.slice(0, 5)} MNL`;
-    }
-
-    // Sync slider value without triggering re-render
-    if (this.slider && parseInt(this.slider.value, 10) !== Math.floor(manilaMinutes)) {
-      this.slider.value = Math.floor(manilaMinutes);
     }
   }
 
@@ -100,35 +105,58 @@ export default class TimeScrubComponent {
   tickLive() {
     if (!this.liveMode) return;
     const manilaObj = this.timeService.getTimeAtOffset(this.dayOffset);
-    const riyadhObj = this.timeService.getTimeAtOffset(this.nightOffset);
-
-    if (this.dateDayEl) this.dateDayEl.textContent = this.timeService.formatDate(manilaObj.date);
-    if (this.dateNightEl) this.dateNightEl.textContent = this.timeService.formatDate(riyadhObj.date);
-
     const d = manilaObj.date;
     const manilaMinutes = (d.getHours() * 60) + d.getMinutes() + (d.getSeconds() / 60);
     this.render(manilaMinutes);
   }
 
   /**
-   * Initializes event listeners and starts tick loop.
+   * Initializes pointer drag handlers and real-time interval.
    */
   init() {
     this.tickLive();
     this.timerId = setInterval(() => this.tickLive(), 1000);
 
-    if (!this.slider) return;
+    if (!this.slider || !this.hero) return;
 
-    this.slider.addEventListener('input', (e) => {
+    let dragging = false;
+
+    const getValueFromEvent = (e) => {
+      const rect = this.hero.getBoundingClientRect();
+      const isVertical = window.matchMedia('(min-width: 641px)').matches;
+      const clientPos = e.touches ? e.touches[0] : e;
+
+      const ratio = isVertical
+        ? (clientPos.clientY - rect.top) / rect.height
+        : (clientPos.clientX - rect.left) / rect.width;
+
+      return Math.min(1439, Math.max(0, Math.round(ratio * 1439)));
+    };
+
+    const onMove = (e) => {
+      if (!dragging) return;
       this.liveMode = false;
-      this.render(parseInt(e.target.value, 10));
+      if (this.backToNowEl) this.backToNowEl.hidden = false;
+      this.render(getValueFromEvent(e));
+    };
+
+    this.slider.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      onMove(e);
     });
 
-    // Double-click to resume live ticking time
-    this.slider.addEventListener('dblclick', () => {
-      this.liveMode = true;
-      this.tickLive();
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', () => {
+      dragging = false;
     });
+
+    if (this.backToNowEl) {
+      this.backToNowEl.addEventListener('click', () => {
+        this.liveMode = true;
+        this.backToNowEl.hidden = true;
+        this.tickLive();
+      });
+    }
   }
 
   destroy() {

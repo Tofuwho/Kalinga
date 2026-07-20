@@ -47,9 +47,10 @@
 
       <!-- Connecting Seam Divider -->
       <div class="seam">
-        <input type="range" class="time-scrub" id="time-scrub" min="0" max="1439" aria-label="Explore any hour of the day">
+        <div class="time-scrub" id="time-scrub" role="slider" aria-label="Explore any hour of the day" tabindex="0"></div>
         <span class="seam-text">Still there.</span>
         <span class="scrub-hint">Drag to see any hour</span>
+        <button type="button" class="back-to-now" id="back-to-now" hidden>Back to live time</button>
       </div>
 
       <!-- Day Half (Manila) -->

@@ -225,15 +225,15 @@
 /* Interactive Time Rail Slider */
 .time-scrub {
   position: absolute;
-  inset: -10px -20px;
-  width: calc(100% + 40px);
-  height: calc(100% + 20px);
+  inset: -20px -30px;
+  width: calc(100% + 60px);
+  height: calc(100% + 40px);
   opacity: 0;
   cursor: grab;
   z-index: 30;
   margin: 0;
-  -webkit-appearance: none;
-  appearance: none;
+  touch-action: none;
+  user-select: none;
 }
 
 .time-scrub:active {
@@ -264,6 +264,37 @@
 
 .seam:hover .scrub-hint {
   opacity: 1;
+}
+
+/* Back to live time button */
+.back-to-now {
+  position: absolute;
+  top: calc(100% + 42px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--green);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 35;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.back-to-now:hover {
+  background: var(--green-dark);
+  transform: translateX(-50%) scale(1.04);
+}
+
+.back-to-now[hidden] {
+  display: none;
 }
 
 @keyframes slide-in-left {
