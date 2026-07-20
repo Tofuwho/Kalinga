@@ -200,8 +200,10 @@
   background: rgba(255, 255, 255, 0.35);
   z-index: 20;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 12px;
 }
 
 .seam-text {
@@ -241,10 +243,7 @@
 }
 
 .scrub-hint {
-  position: absolute;
-  top: calc(100% + 12px);
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.1em;
@@ -258,7 +257,7 @@
   pointer-events: none;
   white-space: nowrap;
   opacity: 0.75;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease;
   z-index: 25;
 }
 
@@ -268,10 +267,7 @@
 
 /* Back to live time button */
 .back-to-now {
-  position: absolute;
-  top: calc(100% + 42px);
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
@@ -290,7 +286,7 @@
 
 .back-to-now:hover {
   background: var(--green-dark);
-  transform: translateX(-50%) scale(1.04);
+  transform: scale(1.04);
 }
 
 .back-to-now[hidden] {
