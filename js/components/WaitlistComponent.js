@@ -1,20 +1,22 @@
 /**
  * WaitlistComponent
- * Manages waitlist form submit events, validation, state feedback, and signup count updates.
+ * Manages waitlist form submit events, validation, state feedback, and animated signup count updates.
  */
 export default class WaitlistComponent {
   /**
    * @param {Object} config
    * @param {StorageService} config.storageService
-   * @param {string} config.formId
-   * @param {string} config.emailInputId
-   * @param {string} config.submitBtnId
-   * @param {string} config.statusId
-   * @param {string} config.countId
+   * @param {Function} [config.anime]
+   * @param {string} [config.formId='waitlist-form']
+   * @param {string} [config.emailInputId='waitlist-email']
+   * @param {string} [config.submitBtnId='waitlist-submit']
+   * @param {string} [config.statusId='waitlist-status']
+   * @param {string} [config.countId='waitlist-count']
    * @param {string} [config.storageKey='kalinga-waitlist-count']
    */
   constructor({
     storageService,
+    anime = (typeof window !== 'undefined' ? window.anime : null),
     formId = 'waitlist-form',
     emailInputId = 'waitlist-email',
     submitBtnId = 'waitlist-submit',
@@ -23,7 +25,9 @@ export default class WaitlistComponent {
     storageKey = 'kalinga-waitlist-count'
   }) {
     this.storageService = storageService;
+    this.anime = anime || (typeof window !== 'undefined' ? window.anime : null);
     this.storageKey = storageKey;
+    this._lastCount = 0;
 
     this.formEl = document.getElementById(formId);
     this.emailInputEl = document.getElementById(emailInputId);
@@ -43,19 +47,35 @@ export default class WaitlistComponent {
   }
 
   /**
-   * Fetches and displays the current waitlist signup count.
+   * Fetches and displays the current waitlist signup count with animated count-up tween.
    */
   async refreshCount() {
     if (!this.countEl) return;
     try {
       const val = await this.storageService.get(this.storageKey, true);
       const count = val ? parseInt(val, 10) : 0;
+      const from = this._lastCount ?? 0;
+      const animeInstance = this.anime || (typeof window !== 'undefined' ? window.anime : null);
 
-      if (count > 0) {
-        this.countEl.textContent = `${count} ${count === 1 ? 'parent has' : 'parents have'} joined so far`;
-      } else {
+      if (count === 0) {
         this.countEl.textContent = 'Be the first to join';
+      } else if (animeInstance) {
+        const counter = { value: from };
+        animeInstance({
+          targets: counter,
+          value: count,
+          round: 1,
+          duration: 600,
+          easing: 'easeOutQuad',
+          update: () => {
+            const roundedVal = Math.round(counter.value);
+            this.countEl.textContent = `${roundedVal} ${roundedVal === 1 ? 'parent has' : 'parents have'} joined so far`;
+          }
+        });
+      } else {
+        this.countEl.textContent = `${count} ${count === 1 ? 'parent has' : 'parents have'} joined so far`;
       }
+      this._lastCount = count;
     } catch (err) {
       this.countEl.textContent = '';
     }
