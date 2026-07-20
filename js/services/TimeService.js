@@ -22,12 +22,11 @@ export default class TimeService {
     if (hours === 0) hours = 12;
 
     const formattedHours = String(hours).padStart(2, '0');
-    const timeString = `${formattedHours}:${minutes}:${seconds} ${ampm}`;
-    const shortTimeString = `${formattedHours}:${minutes} ${ampm}`;
+    const timeString = `${formattedHours}:${minutes} ${ampm}`;
 
     return {
       time: timeString,
-      shortTime: shortTimeString,
+      shortTime: timeString,
       date: targetDate
     };
   }

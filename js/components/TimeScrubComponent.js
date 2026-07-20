@@ -88,12 +88,12 @@ export default class TimeScrubComponent {
     if (this.dateNightEl) this.dateNightEl.textContent = this.timeService.formatDate(riyadhDate);
 
     if (this.navTimeEl) {
-      this.navTimeEl.textContent = `${manilaTime.slice(0, 5)} MNL`;
+      this.navTimeEl.textContent = `${manilaTime} MNL`;
     }
   }
 
   /**
-   * Converts minutes (0..1439) into 12-hour formatted time string.
+   * Converts minutes (0..1439) into 12-hour formatted time string (HH:MM AM/PM).
    * @param {number} totalMinutes
    * @returns {string}
    */
@@ -106,7 +106,7 @@ export default class TimeScrubComponent {
     if (hours === 0) hours = 12;
 
     const hStr = String(hours).padStart(2, '0');
-    return `${hStr}:${mins}:00 ${ampm}`;
+    return `${hStr}:${mins} ${ampm}`;
   }
 
   /**
