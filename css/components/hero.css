@@ -12,13 +12,13 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(24px, 4vh, 48px) clamp(20px, 4vw, 56px);
-  padding-bottom: max(clamp(24px, 4vh, 48px), env(safe-area-inset-bottom));
-  padding-left: max(clamp(20px, 4vw, 56px), env(safe-area-inset-left));
-  padding-right: max(clamp(20px, 4vw, 56px), env(safe-area-inset-right));
+  justify-content: space-between;
+  padding: clamp(80px, 12vh, 120px) clamp(20px, 5vw, 64px) clamp(32px, 5vh, 48px);
+  padding-left: max(clamp(20px, 5vw, 64px), env(safe-area-inset-left));
+  padding-right: max(clamp(20px, 5vw, 64px), env(safe-area-inset-right));
   min-height: 100vh;
   min-height: 100dvh;
+  z-index: 1;
 }
 
 .half.night {
@@ -52,14 +52,62 @@
 
 .celestial {
   position: absolute;
-  top: clamp(10%, 14vh, 18%);
+  top: clamp(20px, 4vh, 32px);
   width: clamp(40px, 6vw, 64px);
   height: clamp(40px, 6vw, 64px);
   transition: all 0.3s ease;
 }
 
-.night .celestial { right: 18%; }
-.day .celestial { left: 18%; }
+.night .celestial { right: 6vw; }
+.day .celestial { right: 6vw; }
+
+.hero-half-copy {
+  position: relative;
+  z-index: 5;
+  max-width: 480px;
+}
+
+.night .hero-half-copy {
+  color: #fff;
+}
+
+.day .hero-half-copy {
+  color: #3b2705;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 1.2vw, 12px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 12px;
+}
+
+.hero-title-part {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1.08;
+  margin: 0;
+}
+
+.night-part {
+  color: #ffffff;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+.day-part {
+  color: #3b2705;
+}
+
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  color: #4a330b;
+  margin-top: 14px;
+  line-height: 1.55;
+}
 
 .city-block {
   position: relative;
@@ -79,7 +127,7 @@
 
 .clock {
   font-family: var(--font-mono);
-  font-size: clamp(2rem, 6.5vw, 4.6rem);
+  font-size: clamp(2.2rem, 6vw, 4.4rem);
   font-weight: 500;
   line-height: 1;
   margin-top: 6px;
@@ -99,53 +147,7 @@
 .night .day-label { color: #c7cff0; }
 .day .day-label { color: #5a3d0e; }
 
-.hero-copy {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -58%);
-  z-index: 10;
-  text-align: center;
-  width: min(90vw, 780px);
-  pointer-events: none;
-}
-
-.hero-eyebrow {
-  font-family: var(--font-mono);
-  font-size: clamp(10px, 1.3vw, 12px);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #fff;
-  opacity: 0.85;
-  margin-bottom: clamp(8px, 1.5vh, 14px);
-}
-
-.hero-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.8rem, 4.8vw, 4.1rem);
-  line-height: 1.05;
-  color: #fff;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.28);
-  margin: 0;
-}
-
-.hero-title em {
-  font-style: italic;
-  font-weight: 500;
-}
-
-.hero-sub {
-  font-family: var(--font-body);
-  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
-  color: #fff;
-  opacity: 0.92;
-  max-width: 520px;
-  margin: clamp(12px, 2vh, 18px) auto 0;
-  line-height: 1.55;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
-}
-
+/* Connecting Seam */
 .seam {
   position: absolute;
   top: 0;
@@ -153,7 +155,25 @@
   left: 50%;
   width: 1px;
   background: rgba(255, 255, 255, 0.35);
-  z-index: 5;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seam-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.4vw, 2.2rem);
+  color: #fff;
+  background: rgba(19, 27, 50, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 8px 22px;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
 .scroll-cue {
@@ -161,7 +181,7 @@
   bottom: max(20px, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 25;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.1em;
@@ -193,8 +213,8 @@
 
 /* Tablet & Mobile Breakpoints */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: clamp(1.7rem, 5vw, 2.8rem);
+  .hero-title-part {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
   }
   .hero-sub {
     max-width: 440px;
@@ -211,28 +231,34 @@
     min-height: 50vh;
     min-height: 50dvh;
     padding: 24px 20px;
+    justify-content: space-between;
   }
   .half.night {
-    justify-content: flex-start;
-    padding-top: max(60px, calc(44px + env(safe-area-inset-top)));
+    padding-top: max(64px, calc(44px + env(safe-area-inset-top)));
+    padding-bottom: 24px;
   }
   .half.day {
-    justify-content: flex-end;
-    padding-bottom: max(28px, calc(20px + env(safe-area-inset-bottom)));
+    padding-top: 28px;
+    padding-bottom: max(24px, calc(16px + env(safe-area-inset-bottom)));
   }
   .night .celestial {
     top: max(56px, calc(40px + env(safe-area-inset-top)));
     right: 20px;
-    left: auto;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
   .day .celestial {
-    bottom: max(28px, calc(20px + env(safe-area-inset-bottom)));
+    top: 24px;
     right: 20px;
-    left: auto;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
+  }
+  .hero-title-part {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+  }
+  .hero-sub {
+    font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+    margin-top: 8px;
   }
   .clock {
     font-size: clamp(1.8rem, 7vw, 2.4rem);
@@ -242,22 +268,13 @@
     right: 0;
     top: 50%;
     bottom: auto;
-    width: auto;
+    width: 100%;
     height: 1px;
+    transform: translateY(-50%);
   }
-  .hero-copy {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90vw;
-  }
-  .hero-title {
-    font-size: clamp(1.4rem, 5.5vw, 2.1rem);
-  }
-  .hero-sub {
-    font-size: clamp(0.8rem, 3.2vw, 0.95rem);
-    margin-top: 10px;
+  .seam-text {
+    font-size: 1.1rem;
+    padding: 6px 18px;
   }
   .scroll-cue {
     display: none;
@@ -274,10 +291,7 @@
     width: 32px;
     height: 32px;
   }
-  .hero-copy {
-    transform: translate(-50%, -50%);
-  }
-  .hero-title {
+  .hero-title-part {
     font-size: 1.5rem;
   }
   .hero-sub {
@@ -288,11 +302,11 @@
 
 /* Ultra-Wide Monitors & 4K Displays */
 @media (min-width: 1440px) {
-  .hero-title {
+  .hero-title-part {
     font-size: 4.2rem;
   }
   .hero-sub {
-    max-width: 580px;
-    font-size: 1.15rem;
+    max-width: 540px;
+    font-size: 1.1rem;
   }
 }
