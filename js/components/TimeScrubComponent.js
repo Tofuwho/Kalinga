@@ -8,6 +8,7 @@ export default class TimeScrubComponent {
     timeService,
     heroSelector = '.hero',
     sliderSelector = '.time-scrub',
+    thumbId = 'scrub-thumb',
     backToNowId = 'back-to-now',
     clockNightId = 'clock-night',
     dateNightId = 'date-night',
@@ -20,6 +21,7 @@ export default class TimeScrubComponent {
     this.timeService = timeService;
     this.hero = document.querySelector(heroSelector);
     this.slider = document.querySelector(sliderSelector);
+    this.thumbEl = document.getElementById(thumbId);
     this.backToNowEl = document.getElementById(backToNowId);
     this.nightOffset = nightOffset;
     this.dayOffset = dayOffset;
@@ -45,7 +47,7 @@ export default class TimeScrubComponent {
   }
 
   /**
-   * Renders Manila and Riyadh clocks, dates, and sky brightness for any Manila minute (0..1439).
+   * Renders Manila and Riyadh clocks, dates, sky brightness, and scrub thumb position for any Manila minute (0..1439).
    * @param {number} manilaMinutes
    */
   render(manilaMinutes) {
@@ -60,14 +62,22 @@ export default class TimeScrubComponent {
       this.hero.style.setProperty('--night-brightness', riyadhB);
     }
 
-    // 2. Compute live date objects for calendar day boundary changes
+    // 2. Position scrub thumb handle along the seam line
+    if (this.thumbEl) {
+      const pct = ((manilaMinutes / 1439) * 100).toFixed(2);
+      const isVertical = window.matchMedia('(min-width: 641px)').matches;
+      this.thumbEl.style.top = isVertical ? `${pct}%` : '50%';
+      this.thumbEl.style.left = isVertical ? '50%' : `${pct}%`;
+    }
+
+    // 3. Compute live date objects for calendar day boundary changes
     const now = new Date();
     const manilaDate = new Date(now);
     manilaDate.setHours(Math.floor(manilaMinutes / 60), Math.floor(manilaMinutes % 60), 0);
 
     const riyadhDate = new Date(manilaDate.getTime() - (offsetMinutes * 60000));
 
-    // 3. Format clocks and date labels
+    // 4. Format clocks and date labels
     const manilaTime = this.minutesToTimeString(manilaMinutes);
     const riyadhTime = this.minutesToTimeString(riyadhMinutes);
 

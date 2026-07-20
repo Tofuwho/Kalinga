@@ -242,51 +242,63 @@
   cursor: grabbing;
 }
 
-.scrub-hint {
-  position: relative;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #fff;
-  background: rgba(19, 27, 50, 0.85);
-  backdrop-filter: blur(8px);
-  padding: 4px 10px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+/* Visible Seam Scrub Thumb */
+.scrub-thumb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(19, 27, 50, 0.85);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  z-index: 32;
   pointer-events: none;
-  white-space: nowrap;
-  opacity: 0.75;
-  transition: opacity 0.3s ease;
-  z-index: 25;
+  transition: box-shadow 0.2s ease;
 }
 
-.seam:hover .scrub-hint {
-  opacity: 1;
+.seam:hover .scrub-thumb,
+.time-scrub:active ~ .scrub-thumb {
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.25), 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
-/* Back to live time button */
+/* Back to live time dark-glass pill button */
 .back-to-now {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #fff;
-  background: var(--green);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 6px 14px;
-  border-radius: 20px;
+  background: rgba(19, 27, 50, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 40px;
+  padding: 7px 16px 7px 12px;
   cursor: pointer;
   z-index: 35;
   white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.back-to-now::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--day-2);
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .back-to-now:hover {
-  background: var(--green-dark);
-  transform: scale(1.04);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.03);
 }
 
 .back-to-now[hidden] {
