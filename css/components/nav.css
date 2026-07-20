@@ -8,9 +8,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 22px 6vw;
+  padding: clamp(14px, 3vh, 22px) clamp(16px, 6vw, 64px);
+  padding-top: max(clamp(14px, 3vh, 22px), env(safe-area-inset-top));
+  padding-left: max(clamp(16px, 6vw, 64px), env(safe-area-inset-left));
+  padding-right: max(clamp(16px, 6vw, 64px), env(safe-area-inset-right));
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: clamp(11px, 1.4vw, 13px);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   mix-blend-mode: difference;

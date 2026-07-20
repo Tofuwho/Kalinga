@@ -2,6 +2,7 @@
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   overflow: hidden;
 }
@@ -12,8 +13,12 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 32px clamp(20px, 4vw, 56px);
+  padding: clamp(24px, 4vh, 48px) clamp(20px, 4vw, 56px);
+  padding-bottom: max(clamp(24px, 4vh, 48px), env(safe-area-inset-bottom));
+  padding-left: max(clamp(20px, 4vw, 56px), env(safe-area-inset-left));
+  padding-right: max(clamp(20px, 4vw, 56px), env(safe-area-inset-right));
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .half.night {
@@ -47,9 +52,10 @@
 
 .celestial {
   position: absolute;
-  top: 14%;
-  width: 64px;
-  height: 64px;
+  top: clamp(10%, 14vh, 18%);
+  width: clamp(40px, 6vw, 64px);
+  height: clamp(40px, 6vw, 64px);
+  transition: all 0.3s ease;
 }
 
 .night .celestial { right: 18%; }
@@ -62,7 +68,7 @@
 
 .city-name {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: clamp(11px, 1.4vw, 13px);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.85;
@@ -73,7 +79,7 @@
 
 .clock {
   font-family: var(--font-mono);
-  font-size: clamp(2.4rem, 7vw, 4.6rem);
+  font-size: clamp(2rem, 6.5vw, 4.6rem);
   font-weight: 500;
   line-height: 1;
   margin-top: 6px;
@@ -85,7 +91,7 @@
 
 .day-label {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: clamp(11px, 1.2vw, 12px);
   margin-top: 8px;
   opacity: 0.75;
 }
@@ -106,18 +112,18 @@
 
 .hero-eyebrow {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: clamp(10px, 1.3vw, 12px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #fff;
   opacity: 0.85;
-  margin-bottom: 14px;
+  margin-bottom: clamp(8px, 1.5vh, 14px);
 }
 
 .hero-title {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(2.1rem, 5.4vw, 4.1rem);
+  font-size: clamp(1.8rem, 4.8vw, 4.1rem);
   line-height: 1.05;
   color: #fff;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.28);
@@ -131,11 +137,11 @@
 
 .hero-sub {
   font-family: var(--font-body);
-  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
   color: #fff;
   opacity: 0.92;
   max-width: 520px;
-  margin: 18px auto 0;
+  margin: clamp(12px, 2vh, 18px) auto 0;
   line-height: 1.55;
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
 }
@@ -152,7 +158,7 @@
 
 .scroll-cue {
   position: absolute;
-  bottom: 26px;
+  bottom: max(20px, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -185,9 +191,84 @@
   .scroll-cue .line { animation: none; }
 }
 
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: clamp(1.7rem, 5vw, 2.8rem);
+  }
+  .hero-sub {
+    max-width: 440px;
+  }
+}
+
 @media (max-width: 640px) {
-  .hero { flex-direction: column; }
-  .half { min-height: 50vh; padding: 24px 20px; }
-  .seam { left: 0; right: 0; top: 50%; bottom: auto; width: auto; height: 1px; }
-  .hero-copy { width: 88vw; }
+  .hero {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .half {
+    min-height: 50vh;
+    min-height: 50dvh;
+    padding: 28px 20px;
+    justify-content: flex-end;
+  }
+  .night .celestial {
+    top: 60px;
+    right: 16px;
+  }
+  .day .celestial {
+    top: 60px;
+    left: 16px;
+  }
+  .seam {
+    left: 0;
+    right: 0;
+    top: 50%;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+  .hero-copy {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 88vw;
+  }
+  .scroll-cue {
+    display: none;
+  }
+}
+
+/* Landscape Mobile & Short Height Viewports */
+@media (max-height: 550px) and (orientation: landscape) {
+  .hero {
+    min-height: 120vh;
+  }
+  .celestial {
+    top: 8px;
+    width: 32px;
+    height: 32px;
+  }
+  .hero-copy {
+    transform: translate(-50%, -50%);
+  }
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  .hero-sub {
+    font-size: 0.8rem;
+    margin-top: 6px;
+  }
+}
+
+/* Ultra-Wide Monitors & 4K Displays */
+@media (min-width: 1440px) {
+  .hero-title {
+    font-size: 4.2rem;
+  }
+  .hero-sub {
+    max-width: 580px;
+    font-size: 1.15rem;
+  }
 }

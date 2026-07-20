@@ -1,7 +1,8 @@
 /* Waitlist Section Block */
 .waitlist {
   background: linear-gradient(180deg, var(--paper-2), var(--paper));
-  padding: min(14vw, 130px) 6vw;
+  padding: clamp(48px, 12vw, 130px) clamp(20px, 6vw, 64px);
+  padding-bottom: max(clamp(48px, 12vw, 130px), env(safe-area-inset-bottom));
   text-align: center;
 }
 
@@ -13,12 +14,13 @@
 .waitlist h2 {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
   margin: 0 0 12px;
 }
 
 .waitlist p {
   color: var(--ink-soft);
+  font-size: clamp(0.9rem, 1.4vw, 1rem);
   line-height: 1.6;
   margin: 0 0 30px;
 }
@@ -28,17 +30,20 @@
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
 }
 
 .waitlist-form input[type="email"] {
-  flex: 1 1 260px;
+  flex: 1 1 240px;
+  min-height: 48px;
   padding: 14px 16px;
   border-radius: 2px;
   border: 1px solid var(--line);
   background: #fff;
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1.4vw, 0.95rem);
   color: var(--ink);
+  -webkit-appearance: none;
 }
 
 .waitlist-form input[type="email"]:focus {
@@ -46,6 +51,7 @@
 }
 
 .waitlist-form button {
+  min-height: 48px;
   padding: 14px 26px;
   border-radius: 2px;
   border: none;
@@ -57,6 +63,8 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .waitlist-form button:hover {
@@ -71,7 +79,7 @@
 .waitlist-status {
   margin-top: 16px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: clamp(12px, 1.3vw, 13px);
   color: var(--green-dark);
   min-height: 20px;
 }
@@ -79,7 +87,19 @@
 .waitlist-count {
   margin-top: 36px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: clamp(11px, 1.2vw, 12px);
   color: var(--ink-soft);
   letter-spacing: 0.04em;
+}
+
+@media (max-width: 480px) {
+  .waitlist-form {
+    flex-direction: column;
+    width: 100%;
+  }
+  .waitlist-form input[type="email"],
+  .waitlist-form button {
+    width: 100%;
+    flex: none;
+  }
 }

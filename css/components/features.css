@@ -1,15 +1,15 @@
 /* Features Block */
 .features {
-  padding: 40px 6vw 20px;
+  padding: clamp(30px, 6vw, 60px) clamp(20px, 6vw, 64px) 20px;
   max-width: 980px;
   margin: 0 auto;
 }
 
 .feature-row {
   display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: 28px;
-  padding: 44px 0;
+  grid-template-columns: clamp(40px, 6vw, 64px) 1fr;
+  gap: clamp(16px, 3.5vw, 28px);
+  padding: clamp(28px, 5vh, 44px) 0;
   border-top: 1px solid var(--line);
   align-items: start;
 }
@@ -19,11 +19,12 @@
 }
 
 .feature-icon {
-  width: 44px;
-  height: 44px;
+  width: clamp(36px, 5vw, 44px);
+  height: clamp(36px, 5vw, 44px);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .feature-icon svg {
@@ -33,7 +34,7 @@
 
 .feature-name {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: clamp(10px, 1.2vw, 11px);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -43,20 +44,21 @@
 .feature-title {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.9rem);
   margin: 0 0 10px;
 }
 
 .feature-desc {
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1.4vw, 1rem);
   line-height: 1.6;
   color: var(--ink-soft);
   max-width: 560px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
   .feature-row {
-    grid-template-columns: 40px 1fr;
-    gap: 18px;
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+    padding: 24px 0;
   }
 }

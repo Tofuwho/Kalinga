@@ -1,6 +1,6 @@
 /* Narrative Gap Section Block */
 .gap {
-  padding: min(14vw, 140px) 6vw;
+  padding: clamp(48px, 12vw, 140px) clamp(20px, 6vw, 64px);
   max-width: 760px;
   margin: 0 auto;
   text-align: center;
@@ -8,22 +8,33 @@
 
 .gap-eyebrow {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: clamp(10px, 1.3vw, 12px);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--green-dark);
-  margin-bottom: 18px;
+  margin-bottom: clamp(12px, 2vh, 18px);
 }
 
 .gap p {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  font-size: clamp(1.15rem, 2.8vw, 1.9rem);
   line-height: 1.5;
   color: var(--ink);
+  margin: 0;
 }
 
 .gap strong {
   font-weight: 600;
   font-style: italic;
+}
+
+@media (max-width: 480px) {
+  .gap {
+    padding: 40px 20px;
+  }
+  .gap p {
+    font-size: 1.15rem;
+    line-height: 1.45;
+  }
 }

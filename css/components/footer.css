@@ -1,10 +1,12 @@
 /* Footer Block */
 footer {
-  padding: 24px 6vw 40px;
+  padding: 24px clamp(20px, 6vw, 64px) 40px;
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
   text-align: center;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: clamp(10px, 1.2vw, 11px);
   letter-spacing: 0.06em;
   color: var(--ink-soft);
   text-transform: uppercase;
+  line-height: 1.5;
 }
