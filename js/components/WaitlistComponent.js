@@ -1,32 +1,39 @@
 /**
  * WaitlistComponent
- * Manages waitlist form submit events, validation, state feedback, and animated signup count updates.
+ * Manages waitlist form submit events, email validation, persistent storage backup,
+ * remote endpoint dispatch (Formspree/Webhook/API), and animated signup count updates.
  */
 export default class WaitlistComponent {
   /**
    * @param {Object} config
    * @param {StorageService} config.storageService
    * @param {Function} [config.anime]
+   * @param {string} [config.endpoint] Remote API / Formspree / Webhook endpoint URL
    * @param {string} [config.formId='waitlist-form']
    * @param {string} [config.emailInputId='waitlist-email']
    * @param {string} [config.submitBtnId='waitlist-submit']
    * @param {string} [config.statusId='waitlist-status']
    * @param {string} [config.countId='waitlist-count']
    * @param {string} [config.storageKey='kalinga-waitlist-count']
+   * @param {string} [config.emailsKey='kalinga-waitlist-emails']
    */
   constructor({
     storageService,
     anime = (typeof window !== 'undefined' ? window.anime : null),
+    endpoint = null,
     formId = 'waitlist-form',
     emailInputId = 'waitlist-email',
     submitBtnId = 'waitlist-submit',
     statusId = 'waitlist-status',
     countId = 'waitlist-count',
-    storageKey = 'kalinga-waitlist-count'
-  }) {
+    storageKey = 'kalinga-waitlist-count',
+    emailsKey = 'kalinga-waitlist-emails'
+  } = {}) {
     this.storageService = storageService;
     this.anime = anime || (typeof window !== 'undefined' ? window.anime : null);
+    this.endpoint = endpoint;
     this.storageKey = storageKey;
+    this.emailsKey = emailsKey;
     this._lastCount = 0;
 
     this.formEl = document.getElementById(formId);
@@ -42,7 +49,38 @@ export default class WaitlistComponent {
   init() {
     this.refreshCount();
     if (this.formEl) {
+      // Auto-detect endpoint from form action or data attribute if not passed in config
+      if (!this.endpoint) {
+        const action = this.formEl.getAttribute('action');
+        const dataEndpoint = this.formEl.getAttribute('data-endpoint');
+        if (dataEndpoint) {
+          this.endpoint = dataEndpoint;
+        } else if (action && action !== '#' && action !== '') {
+          this.endpoint = action;
+        } else if (typeof window !== 'undefined' && window.KALINGA_WAITLIST_ENDPOINT) {
+          this.endpoint = window.KALINGA_WAITLIST_ENDPOINT;
+        }
+      }
+
       this.formEl.addEventListener('submit', (e) => this.handleSubmit(e));
+    }
+
+    // Expose global console helper so admin can retrieve captured emails
+    if (typeof window !== 'undefined') {
+      window.getKalingaEmails = () => this.getSavedEmails();
+    }
+  }
+
+  /**
+   * Retrieves all locally saved emails.
+   * @returns {Promise<Array<{email: string, date: string}>>}
+   */
+  async getSavedEmails() {
+    try {
+      const raw = await this.storageService.get(this.emailsKey, true);
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      return [];
     }
   }
 
@@ -83,6 +121,7 @@ export default class WaitlistComponent {
 
   /**
    * Handles form submit event.
+   * Validates, backs up email to local storage array, dispatches to endpoint if configured, and updates count.
    * @param {Event} e
    */
   async handleSubmit(e) {
@@ -90,16 +129,41 @@ export default class WaitlistComponent {
     if (!this.emailInputEl) return;
 
     const email = this.emailInputEl.value.trim();
-    if (!email) return;
+    if (!email || !email.includes('@')) {
+      if (this.statusEl) this.statusEl.textContent = 'Please enter a valid email address.';
+      return;
+    }
 
     if (this.submitBtnEl) this.submitBtnEl.disabled = true;
     if (this.statusEl) this.statusEl.textContent = 'Adding you…';
 
     try {
+      // 1. Persistent backup: Save email record into storage array so no signup is ever lost
+      const existingEmails = await this.getSavedEmails();
+      const record = { email, date: new Date().toISOString() };
+      existingEmails.push(record);
+      await this.storageService.set(this.emailsKey, JSON.stringify(existingEmails), true);
+
+      // 2. Dispatch to remote endpoint if configured (Formspree, Webhook, API)
+      if (this.endpoint) {
+        try {
+          await fetch(this.endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ email, timestamp: record.date })
+          });
+        } catch (fetchErr) {
+          console.warn('[Kalinga] Remote endpoint dispatch failed, but email was backed up locally.', fetchErr);
+        }
+      }
+
+      // 3. Increment signup count
       const currentVal = await this.storageService.get(this.storageKey, true);
       const current = currentVal ? parseInt(currentVal, 10) : 0;
       const next = current + 1;
-
       await this.storageService.set(this.storageKey, String(next), true);
 
       if (this.statusEl) this.statusEl.textContent = `You're on the list, #${next}.`;
