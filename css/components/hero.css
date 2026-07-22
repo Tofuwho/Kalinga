@@ -388,23 +388,7 @@
   50% { opacity: 0.8; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .scroll-cue .line,
-  .stars::before,
-  .stars::after,
-  .sunrays,
-  .half.night,
-  .half.day,
-  .seam-text {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-  .stars::before,
-  .stars::after {
-    opacity: 0;
-  }
-}
+
 
 /* Tablet & Mobile Breakpoints */
 @media (max-width: 768px) {
@@ -515,5 +499,25 @@
   .hero-sub {
     max-width: 540px;
     font-size: 1.1rem;
+  }
+}
+
+/* Accessibility: Global Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue .line,
+  .stars::before,
+  .stars::after,
+  .sunrays,
+  .half.night,
+  .half.day,
+  .seam-text,
+  .back-to-now::before {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .stars::before,
+  .stars::after {
+    opacity: 0 !important;
   }
 }

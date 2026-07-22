@@ -83,6 +83,11 @@
   font-size: clamp(12px, 1.3vw, 13px);
   color: var(--green-dark);
   min-height: 20px;
+  transition: color 0.2s ease;
+}
+
+.waitlist-status.error {
+  color: #b93829;
 }
 
 .waitlist-count {

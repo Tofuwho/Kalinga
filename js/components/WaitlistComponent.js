@@ -125,12 +125,18 @@ export default class WaitlistComponent {
 
     const email = this.emailInputEl.value.trim();
     if (!email || !email.includes('@')) {
-      if (this.statusEl) this.statusEl.textContent = 'Please enter a valid email address.';
+      if (this.statusEl) {
+        this.statusEl.classList.add('error');
+        this.statusEl.textContent = 'Please enter a valid email address.';
+      }
       return;
     }
 
     if (this.submitBtnEl) this.submitBtnEl.disabled = true;
-    if (this.statusEl) this.statusEl.textContent = 'Adding you…';
+    if (this.statusEl) {
+      this.statusEl.classList.remove('error');
+      this.statusEl.textContent = 'Adding you…';
+    }
 
     try {
       // 1. Persistent backup: Save email record into storage array so no signup is ever lost
@@ -165,12 +171,18 @@ export default class WaitlistComponent {
       const next = current + 1;
       await this.storageService.set(this.storageKey, String(next), true);
 
-      if (this.statusEl) this.statusEl.textContent = `You're on the list, #${next}.`;
+      if (this.statusEl) {
+        this.statusEl.classList.remove('error');
+        this.statusEl.textContent = `You're on the list, #${next}.`;
+      }
       if (this.formEl) this.formEl.reset();
 
       await this.refreshCount();
     } catch (err) {
-      if (this.statusEl) this.statusEl.textContent = "Couldn't save that — try again in a moment.";
+      if (this.statusEl) {
+        this.statusEl.classList.add('error');
+        this.statusEl.textContent = "Couldn't save that — try again in a moment.";
+      }
     } finally {
       if (this.submitBtnEl) this.submitBtnEl.disabled = false;
     }
