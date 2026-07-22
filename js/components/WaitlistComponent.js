@@ -53,21 +53,16 @@ export default class WaitlistComponent {
       if (!this.endpoint) {
         const action = this.formEl.getAttribute('action');
         const dataEndpoint = this.formEl.getAttribute('data-endpoint');
-        if (dataEndpoint) {
-          this.endpoint = dataEndpoint;
-        } else if (action && action !== '#' && action !== '') {
-          this.endpoint = action;
+        if (dataEndpoint && dataEndpoint.trim() !== '') {
+          this.endpoint = dataEndpoint.trim();
+        } else if (action && action !== '#' && action.trim() !== '') {
+          this.endpoint = action.trim();
         } else if (typeof window !== 'undefined' && window.KALINGA_WAITLIST_ENDPOINT) {
           this.endpoint = window.KALINGA_WAITLIST_ENDPOINT;
         }
       }
 
       this.formEl.addEventListener('submit', (e) => this.handleSubmit(e));
-    }
-
-    // Expose global console helper so admin can retrieve captured emails
-    if (typeof window !== 'undefined') {
-      window.getKalingaEmails = () => this.getSavedEmails();
     }
   }
 
@@ -147,7 +142,7 @@ export default class WaitlistComponent {
       // 2. Dispatch to remote endpoint if configured (Formspree, Webhook, API)
       if (this.endpoint) {
         try {
-          await fetch(this.endpoint, {
+          const res = await fetch(this.endpoint, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -155,6 +150,10 @@ export default class WaitlistComponent {
             },
             body: JSON.stringify({ email, timestamp: record.date })
           });
+
+          if (!res.ok) {
+            console.warn('[Kalinga] Remote endpoint rejected submission:', res.status, res.statusText);
+          }
         } catch (fetchErr) {
           console.warn('[Kalinga] Remote endpoint dispatch failed, but email was backed up locally.', fetchErr);
         }

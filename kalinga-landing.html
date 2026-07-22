@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   
   <!-- Anime.js Animation Engine -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
   <!-- Central CSS Manifest -->
   <link rel="stylesheet" href="css/styles.css">
@@ -161,6 +161,7 @@
       <div class="waitlist-inner">
         <h2>Be first to try it</h2>
         <p>Kalinga is still being built and tested with OFW families. Leave your email and we'll reach out when early access opens.</p>
+        <!-- Configure your Formspree / Webhook endpoint in data-endpoint below (e.g., https://formspree.io/f/YOUR_FORM_ID) -->
         <form class="waitlist-form" id="waitlist-form" action="#" data-endpoint="">
           <input type="email" id="waitlist-email" placeholder="you@email.com" required aria-label="Email address">
           <button type="submit" id="waitlist-submit">Join the list</button>
