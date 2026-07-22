@@ -1,6 +1,6 @@
 /**
  * TimeScrubComponent
- * Interactive time scrubbing across 24 hours with orientation-aware pointer dragging.
+ * Interactive time scrubbing across 24 hours with orientation-aware pointer dragging and keyboard accessibility.
  * Computes live dates, clocks, and independent sky brightness for Manila (UTC+8) and Riyadh (UTC+3).
  */
 export default class TimeScrubComponent {
@@ -26,6 +26,7 @@ export default class TimeScrubComponent {
     this.nightOffset = nightOffset;
     this.dayOffset = dayOffset;
     this.liveMode = true;
+    this._lastMinutes = 0;
 
     this.clockNightEl = document.getElementById(clockNightId);
     this.dateNightEl = document.getElementById(dateNightId);
@@ -47,10 +48,20 @@ export default class TimeScrubComponent {
   }
 
   /**
-   * Renders Manila and Riyadh clocks, dates, sky brightness, and scrub thumb position for any Manila minute (0..1439).
+   * Renders Manila and Riyadh clocks, dates, sky brightness, ARIA slider attributes, and scrub thumb position.
    * @param {number} manilaMinutes
    */
   render(manilaMinutes) {
+    this._lastMinutes = manilaMinutes;
+    const roundedMin = Math.round(manilaMinutes);
+
+    if (this.slider) {
+      this.slider.setAttribute('aria-valuemin', '0');
+      this.slider.setAttribute('aria-valuemax', '1439');
+      this.slider.setAttribute('aria-valuenow', String(roundedMin));
+      this.slider.setAttribute('aria-valuetext', `${this.minutesToTimeString(manilaMinutes)} Manila time`);
+    }
+
     const offsetMinutes = (this.dayOffset - this.nightOffset) * 60;
     const riyadhMinutes = (manilaMinutes - offsetMinutes + 1440) % 1440;
 
@@ -121,7 +132,7 @@ export default class TimeScrubComponent {
   }
 
   /**
-   * Initializes pointer drag handlers and real-time interval.
+   * Initializes pointer drag handlers, keyboard navigation, and real-time interval.
    */
   init() {
     this.tickLive();
@@ -158,6 +169,19 @@ export default class TimeScrubComponent {
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', () => {
       dragging = false;
+    });
+
+    // Keyboard accessibility for role="slider"
+    this.slider.addEventListener('keydown', (e) => {
+      const step = { ArrowUp: 15, ArrowRight: 15, ArrowDown: -15, ArrowLeft: -15 }[e.key];
+      if (step === undefined && e.key !== 'Home' && e.key !== 'End') return;
+      e.preventDefault();
+      this.liveMode = false;
+      if (this.backToNowEl) this.backToNowEl.hidden = false;
+
+      const current = this._lastMinutes ?? 0;
+      let next = e.key === 'Home' ? 0 : e.key === 'End' ? 1439 : (Math.round(current) + step + 1440) % 1440;
+      this.render(next);
     });
 
     if (this.backToNowEl) {
