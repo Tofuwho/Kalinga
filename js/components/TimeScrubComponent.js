@@ -2,6 +2,10 @@
  * TimeScrubComponent
  * Interactive time scrubbing across 24 hours with orientation-aware pointer dragging and keyboard accessibility.
  * Computes live dates, clocks, and independent sky brightness for Manila (UTC+8) and Riyadh (UTC+3).
+ *
+ * NOTE ON DST: Both Riyadh (Asia/Riyadh, UTC+3) and Manila (Asia/Manila, UTC+8) observe fixed standard time year-round.
+ * The 5-hour offset arithmetic assumes no Daylight Saving Time transitions. If adding regions observing DST in the future,
+ * use Intl.DateTimeFormat with explicit IANA timeZone identifiers.
  */
 export default class TimeScrubComponent {
   constructor({

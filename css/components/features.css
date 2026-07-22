@@ -25,6 +25,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: var(--green-dark);
 }
 
 .feature-icon svg {

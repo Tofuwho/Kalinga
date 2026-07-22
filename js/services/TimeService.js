@@ -1,6 +1,9 @@
 /**
  * TimeService
- * Responsible for computing date and time values across multiple UTC time zones.
+ * Responsible for computing date and time values across time zones.
+ *
+ * NOTE ON DST: Uses fixed UTC hour offsets suitable for time zones without Daylight Saving Time transitions
+ * (e.g. Riyadh UTC+3 and Manila UTC+8).
  */
 export default class TimeService {
   /**
