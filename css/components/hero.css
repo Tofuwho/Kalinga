@@ -224,6 +224,38 @@
   pointer-events: none;
 }
 
+/* Seam Rail Hour Ticks */
+.seam-ticks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.seam-tick {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.45);
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+@media (min-width: 641px) {
+  .seam-tick[data-pct="0"]  { top: 6%; left: -26px; }
+  .seam-tick[data-pct="25"] { top: 25%; left: -26px; }
+  .seam-tick[data-pct="50"] { top: 50%; left: -26px; }
+  .seam-tick[data-pct="75"] { top: 75%; left: -26px; }
+}
+
+@media (max-width: 640px) {
+  .seam-tick[data-pct="0"]  { left: 8%; top: -16px; }
+  .seam-tick[data-pct="25"] { left: 25%; top: -16px; }
+  .seam-tick[data-pct="50"] { left: 50%; top: -16px; }
+  .seam-tick[data-pct="75"] { left: 75%; top: -16px; }
+}
+
 /* Interactive Time Rail Slider */
 .time-scrub {
   position: absolute;

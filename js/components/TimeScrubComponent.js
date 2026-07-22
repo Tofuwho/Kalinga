@@ -88,7 +88,7 @@ export default class TimeScrubComponent {
     if (this.dateNightEl) this.dateNightEl.textContent = this.timeService.formatDate(riyadhDate);
 
     if (this.navTimeEl) {
-      this.navTimeEl.textContent = `${manilaTime} MNL`;
+      this.navTimeEl.textContent = `${manilaTime.slice(0, 5)} MNL`;
     }
   }
 

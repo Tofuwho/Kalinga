@@ -4,29 +4,16 @@
  */
 export default class TimeService {
   /**
-   * Returns formatted time string and Date object for a given UTC offset in hours.
+   * Returns Date object for a given UTC offset in hours.
    * @param {number} offsetHours
-   * @returns {{ time: string, date: Date, rawTime: string }}
+   * @returns {{ date: Date }}
    */
   getTimeAtOffset(offsetHours) {
     const now = new Date();
     const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
     const targetDate = new Date(utcMs + (3600000 * offsetHours));
 
-    let hours = targetDate.getHours();
-    const minutes = String(targetDate.getMinutes()).padStart(2, '0');
-    const seconds = String(targetDate.getSeconds()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-
-    hours = hours % 12;
-    if (hours === 0) hours = 12;
-
-    const formattedHours = String(hours).padStart(2, '0');
-    const timeString = `${formattedHours}:${minutes} ${ampm}`;
-
     return {
-      time: timeString,
-      shortTime: timeString,
       date: targetDate
     };
   }
