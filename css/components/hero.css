@@ -268,6 +268,7 @@
   margin: 0;
   touch-action: none;
   user-select: none;
+  outline: none;
 }
 
 .time-scrub:active {
@@ -294,6 +295,10 @@
 .seam:hover .scrub-thumb,
 .time-scrub:active ~ .scrub-thumb {
   box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.25), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.time-scrub:focus-visible ~ .scrub-thumb {
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--green-dark);
 }
 
 /* Back to live time dark-glass pill button */
