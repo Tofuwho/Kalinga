@@ -77,6 +77,13 @@
   cursor: default;
 }
 
+.waitlist-privacy {
+  margin: 12px 0 0;
+  font-size: clamp(0.75rem, 1.1vw, 0.825rem) !important;
+  color: var(--ink-soft);
+  opacity: 0.85;
+}
+
 .waitlist-status {
   margin-top: 16px;
   font-family: var(--font-mono);
