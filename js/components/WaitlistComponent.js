@@ -156,8 +156,24 @@ export default class WaitlistComponent {
             body: JSON.stringify({ email, timestamp: record.date })
           });
 
-          if (!res.ok && res.status !== 0 && res.type !== 'opaque') {
-            console.warn('[Kalinga] Remote endpoint rejected submission:', res.status, res.statusText);
+          let payload = null;
+          try {
+            payload = await res.json();
+          } catch (_) {
+            // response wasn't JSON — nothing to read, fall through to status check
+          }
+
+          if (!res.ok || (payload && payload.status === 'error')) {
+            console.warn('[Kalinga] Remote endpoint rejected submission:', res.status, payload && payload.message);
+            if (payload && payload.status === 'error') {
+              if (this.statusEl) {
+                this.statusEl.classList.add('error');
+                this.statusEl.textContent = payload.message === 'invalid email'
+                  ? 'Please enter a valid email address.'
+                  : (payload.message || 'Server rejected submission.');
+              }
+              return;
+            }
           }
         } catch (fetchErr) {
           console.warn('[Kalinga] Remote endpoint dispatch failed, but email was backed up locally.', fetchErr);
