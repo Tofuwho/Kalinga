@@ -58,12 +58,14 @@ export default class TimeScrubComponent {
   render(manilaMinutes) {
     this._lastMinutes = manilaMinutes;
     const roundedMin = Math.round(manilaMinutes);
+    const isVertical = window.matchMedia('(min-width: 641px)').matches;
 
     if (this.slider) {
       this.slider.setAttribute('aria-valuemin', '0');
       this.slider.setAttribute('aria-valuemax', '1439');
       this.slider.setAttribute('aria-valuenow', String(roundedMin));
       this.slider.setAttribute('aria-valuetext', `${this.minutesToTimeString(manilaMinutes)} Manila time`);
+      this.slider.setAttribute('aria-orientation', isVertical ? 'vertical' : 'horizontal');
     }
 
     const offsetMinutes = (this.dayOffset - this.nightOffset) * 60;
@@ -80,7 +82,6 @@ export default class TimeScrubComponent {
     // 2. Position scrub thumb handle along the seam line
     if (this.thumbEl) {
       const pct = ((manilaMinutes / 1439) * 100).toFixed(2);
-      const isVertical = window.matchMedia('(min-width: 641px)').matches;
       this.thumbEl.style.top = isVertical ? `${pct}%` : '50%';
       this.thumbEl.style.left = isVertical ? '50%' : `${pct}%`;
     }
