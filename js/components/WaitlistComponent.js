@@ -145,19 +145,18 @@ export default class WaitlistComponent {
       existingEmails.push(record);
       await this.storageService.set(this.emailsKey, JSON.stringify(existingEmails), true);
 
-      // 2. Dispatch to remote endpoint if configured (Formspree, Webhook, API)
+      // 2. Dispatch to remote endpoint if configured (Google Apps Script, Formspree, Webhook, API)
       if (this.endpoint) {
         try {
           const res = await fetch(this.endpoint, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
+              'Content-Type': 'text/plain;charset=utf-8'
             },
             body: JSON.stringify({ email, timestamp: record.date })
           });
 
-          if (!res.ok) {
+          if (!res.ok && res.status !== 0 && res.type !== 'opaque') {
             console.warn('[Kalinga] Remote endpoint rejected submission:', res.status, res.statusText);
           }
         } catch (fetchErr) {
