@@ -48,6 +48,30 @@
     margin:0 auto;
   }
   .screen-block{ width:290px; }
+
+  @media (min-width: 900px){
+    .screen-block{ cursor:pointer; transition: transform 0.25s ease; }
+    .screen-block:hover:not(.is-expanded){ transform: translateY(-4px); }
+  }
+
+  .mockup-backdrop{
+    position:fixed; inset:0; background:rgba(11,15,26,0.78);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    opacity:0; pointer-events:none; z-index:90;
+    transition: opacity 0.3s ease;
+  }
+  .mockup-backdrop.active{ opacity:1; pointer-events:auto; }
+
+  .screen-block.is-expanded{
+    position:fixed; top:50%; left:50%;
+    transform:translate(-50%,-50%) scale(1.25);
+    z-index:100; cursor:default;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .screen-block, .screen-block.is-expanded, .mockup-backdrop{ transition:none !important; }
+  }
   .screen-label{
     text-align:center; margin-bottom:16px;
   }
@@ -402,5 +426,43 @@
 
 </div>
 
+<script>
+  (function(){
+    var backdrop = document.createElement('div');
+    backdrop.className = 'mockup-backdrop';
+    document.body.appendChild(backdrop);
+
+    var current = null;
+
+    function isDesktop(){
+      return window.matchMedia('(min-width: 900px)').matches;
+    }
+
+    function closeExpanded(){
+      if (current) current.classList.remove('is-expanded');
+      current = null;
+      backdrop.classList.remove('active');
+    }
+
+    document.querySelectorAll('.screen-block').forEach(function(block){
+      block.addEventListener('click', function(e){
+        if (!isDesktop()) return; // mobile: click does nothing, plain scroll stays as-is
+        if (current === block){ closeExpanded(); return; }
+        if (current) current.classList.remove('is-expanded');
+        block.classList.add('is-expanded');
+        current = block;
+        backdrop.classList.add('active');
+      });
+    });
+
+    backdrop.addEventListener('click', closeExpanded);
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeExpanded();
+    });
+    window.addEventListener('resize', function(){
+      if (!isDesktop()) closeExpanded(); // resizing down to mobile mid-view snaps back to grid
+    });
+  })();
+</script>
 </body>
 </html>
