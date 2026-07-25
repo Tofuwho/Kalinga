@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalinga — Core Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night-1:#131b32; --night-2:#243256;
+    --day-1:#f4c669; --day-2:#e8a33d;
+    --paper:#f1ead9; --paper-2:#e8dfc9;
+    --ink:#1f2823; --ink-soft:#5a6459; --line:rgba(31,40,35,0.14);
+    --green:#5c7a52; --green-dark:#455e3d;
+    --font-display:'Fraunces', serif;
+    --font-body:'Public Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--night-1);
+    background-image: radial-gradient(circle at 15% 10%, rgba(91,111,168,0.18), transparent 45%);
+    color:var(--paper);
+    font-family:var(--font-body);
+    padding:56px 24px 80px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page-head{ text-align:center; max-width:640px; margin:0 auto 56px; }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--day-1); margin-bottom:14px;
+  }
+  h1{
+    font-family:var(--font-display); font-weight:600; font-size:clamp(1.8rem,4vw,2.6rem);
+    margin:0 0 12px; line-height:1.15;
+  }
+  .page-head p{ color:rgba(241,234,217,0.7); line-height:1.6; margin:0; font-size:0.98rem; }
+
+  .board{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:44px;
+    max-width:1400px; margin:0 auto;
+  }
+  .screen-block{ width:290px; }
+  .screen-label{
+    text-align:center; margin-bottom:16px;
+  }
+  .screen-num{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--day-1); margin-bottom:4px;
+  }
+  .screen-title{
+    font-family:var(--font-display); font-weight:600; font-size:1.15rem; color:#fff;
+  }
+
+  /* Phone chrome */
+  .phone{
+    width:290px; height:610px; border-radius:38px;
+    background:#0b0f1a; padding:12px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .phone-screen{
+    width:100%; height:100%; border-radius:28px; overflow:hidden;
+    background:var(--paper); position:relative; display:flex; flex-direction:column;
+  }
+  .status-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 20px 6px; font-family:var(--font-mono); font-size:11px; color:var(--ink);
+  }
+  .notch{
+    position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:120px; height:26px; background:#0b0f1a; border-radius:0 0 16px 16px; z-index:5;
+  }
+  .app-nav{
+    padding:6px 18px 14px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .app-nav-title{ font-family:var(--font-display); font-weight:600; font-size:1.05rem; color:var(--ink); }
+  .app-nav-sub{ font-family:var(--font-mono); font-size:10px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em; }
+  .app-body{ flex:1; overflow:hidden; padding:16px 16px 12px; display:flex; flex-direction:column; gap:12px; }
+  .home-indicator{
+    width:110px; height:4px; border-radius:2px; background:var(--ink);
+    opacity:0.25; margin:8px auto 4px;
+  }
+
+  /* --- Screen 1: Shared Timeline --- */
+  .feed-card{
+    background:#fff; border-radius:14px; padding:14px; border:1px solid var(--line);
+  }
+  .feed-card-photo{
+    width:100%; height:90px; border-radius:8px; margin-bottom:10px;
+    background:linear-gradient(135deg, var(--day-1), var(--day-2));
+  }
+  .feed-caption{ font-size:13px; line-height:1.5; color:var(--ink); margin-bottom:8px; }
+  .feed-meta{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--font-mono); font-size:10px; color:var(--ink-soft);
+  }
+  .reaction-row{
+    display:flex; align-items:center; gap:6px; margin-top:10px; padding-top:10px;
+    border-top:1px solid var(--line); font-size:12px; color:var(--green-dark);
+  }
+
+  /* --- Screen 2: Async Presence --- */
+  .record-panel{
+    background:linear-gradient(160deg, var(--night-1), var(--night-2));
+    border-radius:16px; padding:22px 18px; text-align:center; color:#fff;
+  }
+  .record-dot{
+    width:14px; height:14px; border-radius:50%; background:#e8635a; margin:0 auto 10px;
+    box-shadow:0 0 0 6px rgba(232,99,90,0.2);
+  }
+  .record-time{ font-family:var(--font-mono); font-size:1.3rem; margin-bottom:4px; }
+  .record-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.7; }
+  .delivery-card{
+    background:#fff; border-radius:14px; padding:14px; border:1px solid var(--line);
+  }
+  .delivery-row{ display:flex; align-items:center; gap:10px; }
+  .delivery-icon{
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg, var(--day-1), var(--day-2));
+    display:flex; align-items:center; justify-content:center; font-size:15px;
+  }
+  .delivery-title{ font-size:13px; font-weight:600; color:var(--ink); }
+  .delivery-sub{ font-family:var(--font-mono); font-size:10px; color:var(--ink-soft); margin-top:2px; }
+  .past-item{
+    display:flex; justify-content:space-between; font-family:var(--font-mono);
+    font-size:10px; color:var(--ink-soft); padding:8px 2px; border-bottom:1px solid var(--line);
+  }
+
+  /* --- Screen 3: Find Your Words --- */
+  .compose-target{
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .suggestion-chip{
+    background:var(--paper-2); border:1px dashed var(--ink-soft);
+    border-radius:10px; padding:10px 12px; font-size:12px; color:var(--ink-soft);
+    font-style:italic; line-height:1.5;
+  }
+  .suggestion-label{
+    font-family:var(--font-mono); font-size:9px; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--green-dark); margin-bottom:6px; font-style:normal;
+  }
+  .compose-box{
+    flex:1; background:#fff; border-radius:14px; border:1px solid var(--line);
+    padding:14px; font-size:13px; line-height:1.6; color:var(--ink);
+  }
+  .compose-box .placeholder-cursor{
+    display:inline-block; width:2px; height:14px; background:var(--green-dark);
+    margin-left:2px; vertical-align:middle;
+  }
+  .send-btn{
+    margin-top:auto; background:var(--green); color:#fff; border:none;
+    border-radius:40px; padding:12px; font-family:var(--font-mono); font-size:11px;
+    letter-spacing:0.06em; text-transform:uppercase; text-align:center;
+  }
+
+  /* --- Screen 4: Honest Presence --- */
+  .presence-summary{ text-align:center; padding:6px 0 4px; }
+  .presence-days{ font-family:var(--font-display); font-weight:600; font-size:1.6rem; color:var(--ink); }
+  .presence-sub{ font-family:var(--font-mono); font-size:10px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em; margin-top:2px; }
+  .streak-grid{
+    display:grid; grid-template-columns:repeat(7, 1fr); gap:8px; padding:6px 4px;
+  }
+  .day-cell{ text-align:center; }
+  .day-label{ font-family:var(--font-mono); font-size:8px; color:var(--ink-soft); margin-bottom:6px; text-transform:uppercase; }
+  .day-dot{
+    width:20px; height:20px; border-radius:50%; margin:0 auto;
+    border:2px solid var(--green-dark);
+  }
+  .day-dot.present{ background:var(--green-dark); }
+  .day-dot.quiet{ background:transparent; }
+  .presence-note{
+    background:var(--paper-2); border-radius:12px; padding:12px 14px;
+    font-size:12px; color:var(--ink-soft); line-height:1.55; margin-top:auto;
+  }
+
+  /* --- Screen 5: Propose a Call --- */
+  .call-clocks{ display:flex; gap:10px; }
+  .call-mini-clock{
+    flex:1; border-radius:12px; padding:12px 10px; text-align:center;
+  }
+  .call-mini-clock.night{ background:linear-gradient(160deg, var(--night-1), var(--night-2)); color:#fff; }
+  .call-mini-clock.day{ background:linear-gradient(160deg, var(--day-1), var(--day-2)); color:#3b2705; }
+  .call-mini-city{ font-family:var(--font-mono); font-size:9px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.8; margin-bottom:4px; }
+  .call-mini-time{ font-family:var(--font-mono); font-size:1.15rem; font-weight:500; }
+  .call-status-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--font-mono); font-size:9px; text-transform:uppercase; letter-spacing:0.05em;
+    background:var(--paper-2); color:var(--ink-soft); border-radius:20px; padding:5px 10px;
+  }
+  .call-status-pill::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--day-2); }
+  .call-cta{
+    margin-top:auto; background:var(--paper-2); color:var(--ink-soft); border:1px dashed var(--ink-soft);
+    border-radius:40px; padding:12px; font-family:var(--font-mono); font-size:11px;
+    letter-spacing:0.06em; text-transform:uppercase; text-align:center;
+  }
+  .call-note{ font-size:11px; color:var(--ink-soft); line-height:1.5; text-align:center; padding:0 6px; }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="eyebrow">Kalinga · Core Screens</div>
+  <h1>What the app actually looks like</h1>
+  <p>Five screens, five ideas — a shared feed, a message that waits for the right moment, a nudge instead of a script, a gap that stays visible instead of getting hidden, and a call that's easier to actually land.</p>
+</div>
+
+<div class="board">
+
+  <!-- Screen 1: Shared Timeline -->
+  <div class="screen-block">
+    <div class="screen-label">
+      <div class="screen-num">01</div>
+      <div class="screen-title">Shared Timeline</div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+        <div class="app-nav">
+          <div>
+            <div class="app-nav-title">Miguel's Day</div>
+            <div class="app-nav-sub">Manila · Today</div>
+          </div>
+        </div>
+        <div class="app-body">
+          <div class="feed-card">
+            <div class="feed-card-photo"></div>
+            <div class="feed-caption">Scraped his knee at recess but he's already back to running around 😊</div>
+            <div class="feed-meta"><span>Posted by Lola</span><span>3:45 PM</span></div>
+            <div class="reaction-row">❤️ You reacted</div>
+          </div>
+          <div class="feed-card">
+            <div class="feed-caption">Spelling test: 9/10! He wants to tell you about the one he missed.</div>
+            <div class="feed-meta"><span>Posted by Lola</span><span>1:10 PM</span></div>
+          </div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Async Presence -->
+  <div class="screen-block">
+    <div class="screen-label">
+      <div class="screen-num">02</div>
+      <div class="screen-title">Async Presence</div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>11:02</span><span>●●●</span></div>
+        <div class="app-nav">
+          <div>
+            <div class="app-nav-title">Bedtime Story</div>
+            <div class="app-nav-sub">Riyadh · Your break</div>
+          </div>
+        </div>
+        <div class="app-body">
+          <div class="record-panel">
+            <div class="record-dot"></div>
+            <div class="record-time">0:42</div>
+            <div class="record-label">Recording</div>
+          </div>
+          <div class="delivery-card">
+            <div class="delivery-row">
+              <div class="delivery-icon">🌙</div>
+              <div>
+                <div class="delivery-title">Arrives at his bedtime</div>
+                <div class="delivery-sub">8:00 PM Manila · Tonight</div>
+              </div>
+            </div>
+          </div>
+          <div class="past-item"><span>Yesterday</span><span>Delivered ✓ 8:00 PM</span></div>
+          <div class="past-item"><span>Tuesday</span><span>Delivered ✓ 8:00 PM</span></div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Find Your Words -->
+  <div class="screen-block">
+    <div class="screen-label">
+      <div class="screen-num">03</div>
+      <div class="screen-title">Find Your Words</div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>2:18</span><span>●●●</span></div>
+        <div class="app-nav">
+          <div>
+            <div class="app-nav-title">Write to Miguel</div>
+            <div class="compose-target">A message, not a form</div>
+          </div>
+        </div>
+        <div class="app-body">
+          <div class="suggestion-chip">
+            <div class="suggestion-label">Starting line</div>
+            "I was thinking about you today when..."
+          </div>
+          <div class="compose-box">
+            I was thinking about you today when I saw a boy your age at the market, and it reminded me how much you love asking questions<span class="placeholder-cursor"></span>
+          </div>
+          <div class="send-btn">Send to Miguel</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Honest Presence -->
+  <div class="screen-block">
+    <div class="screen-label">
+      <div class="screen-num">04</div>
+      <div class="screen-title">Honest Presence</div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>7:30</span><span>●●●</span></div>
+        <div class="app-nav">
+          <div>
+            <div class="app-nav-title">Your Presence</div>
+            <div class="app-nav-sub">This week</div>
+          </div>
+        </div>
+        <div class="app-body">
+          <div class="presence-summary">
+            <div class="presence-days">4 / 7</div>
+            <div class="presence-sub">Days you showed up</div>
+          </div>
+          <div class="streak-grid">
+            <div class="day-cell"><div class="day-label">M</div><div class="day-dot present"></div></div>
+            <div class="day-cell"><div class="day-label">T</div><div class="day-dot present"></div></div>
+            <div class="day-cell"><div class="day-label">W</div><div class="day-dot quiet"></div></div>
+            <div class="day-cell"><div class="day-label">T</div><div class="day-dot quiet"></div></div>
+            <div class="day-cell"><div class="day-label">F</div><div class="day-dot present"></div></div>
+            <div class="day-cell"><div class="day-label">S</div><div class="day-dot present"></div></div>
+            <div class="day-cell"><div class="day-label">S</div><div class="day-dot quiet"></div></div>
+          </div>
+          <div class="presence-note">Kalinga shows the full picture — including the days you weren't here. No hidden gaps, no scheduled message standing in for you.</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 5: Propose a Call -->
+  <div class="screen-block">
+    <div class="screen-label">
+      <div class="screen-num">05</div>
+      <div class="screen-title">Propose a Call</div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="status-bar"><span>6:02</span><span>●●●</span></div>
+        <div class="app-nav">
+          <div>
+            <div class="app-nav-title">Schedule a Call</div>
+            <div class="app-nav-sub">With Lola & Miguel</div>
+          </div>
+        </div>
+        <div class="app-body">
+          <div class="call-clocks">
+            <div class="call-mini-clock night">
+              <div class="call-mini-city">Riyadh · You</div>
+              <div class="call-mini-time">6:00 AM</div>
+            </div>
+            <div class="call-mini-clock day">
+              <div class="call-mini-city">Manila · Miguel</div>
+              <div class="call-mini-time">11:00 AM</div>
+            </div>
+          </div>
+          <div class="delivery-card">
+            <div class="delivery-row">
+              <div class="delivery-icon">📅</div>
+              <div>
+                <div class="delivery-title">Proposed: Sunday</div>
+                <div class="delivery-sub">6:00 AM your time · 11:00 AM his</div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;"><span class="call-status-pill">Waiting for Lola to confirm</span></div>
+          <div class="call-note">Once confirmed, you'll both get a reminder — tap it to join in Messenger.</div>
+          <div class="call-cta">Waiting for confirmation</div>
+        </div>
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
