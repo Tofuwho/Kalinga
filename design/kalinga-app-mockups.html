@@ -40,8 +40,12 @@
   .page-head p{ color:rgba(241,234,217,0.7); line-height:1.6; margin:0; font-size:0.98rem; }
 
   .board{
-    display:flex; flex-wrap:wrap; justify-content:center; gap:44px;
-    max-width:1400px; margin:0 auto;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 300px));
+    justify-content:center;
+    gap:44px;
+    max-width:1700px;
+    margin:0 auto;
   }
   .screen-block{ width:290px; }
   .screen-label{
