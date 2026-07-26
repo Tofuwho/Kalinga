@@ -66,12 +66,45 @@
     position:fixed !important;
     top:50% !important;
     left:50% !important;
-    transform:translate(-50%,-50%) scale(var(--expanded-scale, 1.15));
+    transform:translate(calc(-50% + var(--phone-offset-x, 0px)), -50%) scale(var(--expanded-scale, 1.15));
     transform-origin: center center;
     z-index:100;
     cursor:default;
     transition:none !important;
     margin:0 !important;
+  }
+
+  .mockup-detail{
+    position:fixed;
+    transform: translateY(-50%);
+    width:340px; max-width:calc(100vw - 60px);
+    max-height:70vh; overflow-y:auto;
+    background:var(--paper);
+    border-radius:20px;
+    padding:30px 28px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.45);
+    z-index:101;
+    clip-path: inset(0 100% 0 0);
+    opacity:0;
+    pointer-events:none;
+  }
+  .mockup-detail.visible{ pointer-events:auto; }
+  .mockup-detail-close{
+    position:absolute; top:16px; right:16px; width:28px; height:28px;
+    border-radius:50%; border:none; background:var(--paper-2); color:var(--ink-soft);
+    cursor:pointer; font-family:var(--font-body); font-size:15px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .mockup-detail-eyebrow{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--green-dark); margin-bottom:12px;
+  }
+  .mockup-detail-title{
+    font-family:var(--font-display); font-weight:600; font-size:1.5rem;
+    color:var(--ink); margin:0 0 16px; line-height:1.2;
+  }
+  .mockup-detail-body{
+    font-size:0.95rem; line-height:1.7; color:var(--ink-soft); margin:0;
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -245,7 +278,7 @@
 <div class="board">
 
   <!-- Screen 1: Shared Timeline -->
-  <div class="screen-block">
+  <div class="screen-block" data-detail-eyebrow="What it does" data-detail-body="The caregiver at home posts what actually happened in the child's day — a photo, a short caption, a small update. The parent abroad sees it and reacts or replies whenever their shift allows. This is the record of daily life that doesn't currently exist anywhere — a chat thread disappears into scroll; this is meant to be looked back on.">
     <div class="screen-label">
       <div class="screen-num">01</div>
       <div class="screen-title">Shared Timeline</div>
@@ -278,7 +311,7 @@
   </div>
 
   <!-- Screen 2: Async Presence -->
-  <div class="screen-block">
+  <div class="screen-block" data-detail-eyebrow="What it does" data-detail-body="A parent records a message during whatever moment they have — a break, a commute, a quiet hour. It doesn't send immediately. It's held and delivered at the child's bedtime, on the child's clock, regardless of what time it is for the parent — so presence lands at the moment it's actually meaningful, not as a random notification at 2am their time.">
     <div class="screen-label">
       <div class="screen-num">02</div>
       <div class="screen-title">Async Presence</div>
@@ -317,7 +350,7 @@
   </div>
 
   <!-- Screen 3: Find Your Words -->
-  <div class="screen-block">
+  <div class="screen-block" data-detail-eyebrow="What it does" data-detail-body="When a parent doesn't know what to say, Kalinga offers a starting line — never a finished message. It nudges toward their own words rather than writing the moment for them. This solves a real, underserved problem: parents often go quiet not because they don't care, but because they don't know what to say after a hard shift.">
     <div class="screen-label">
       <div class="screen-num">03</div>
       <div class="screen-title">Find Your Words</div>
@@ -348,7 +381,7 @@
   </div>
 
   <!-- Screen 4: Honest Presence -->
-  <div class="screen-block">
+  <div class="screen-block" data-detail-eyebrow="What it does" data-detail-body="A quiet week shows up as a quiet week — visibly, to the parent, not hidden or smoothed over. Kalinga won't let a scheduled message stand in for a parent who's checked out. This is the answer to the core risk of an app like this: that it could become an excuse not to be present.">
     <div class="screen-label">
       <div class="screen-num">04</div>
       <div class="screen-title">Honest Presence</div>
@@ -385,7 +418,7 @@
   </div>
 
   <!-- Screen 5: Propose a Call -->
-  <div class="screen-block">
+  <div class="screen-block" data-detail-eyebrow="What it does" data-detail-body="The parent and caregiver each see the same dual-clock view, propose a time slot where both the parent's break and the child's waking hours overlap, and confirm it together. At the agreed time, both sides get a reminder that hands off to whichever calling app they already use — Kalinga doesn't replace the call, it removes the coordination tax that currently makes it rare.">
     <div class="screen-label">
       <div class="screen-num">05</div>
       <div class="screen-title">Propose a Call</div>
@@ -434,9 +467,24 @@
 <script type="module">
   import { animate } from "https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm";
 
+  var DETAIL_WIDTH = 340;
+  var DETAIL_GAP = 32;
+
   var backdrop = document.createElement('div');
   backdrop.className = 'mockup-backdrop';
   document.body.appendChild(backdrop);
+
+  var detail = document.createElement('div');
+  detail.className = 'mockup-detail';
+  detail.innerHTML =
+    '<button type="button" class="mockup-detail-close" aria-label="Close">✕</button>' +
+    '<div class="mockup-detail-eyebrow"></div>' +
+    '<h3 class="mockup-detail-title"></h3>' +
+    '<p class="mockup-detail-body"></p>';
+  document.body.appendChild(detail);
+  var detailEyebrow = detail.querySelector('.mockup-detail-eyebrow');
+  var detailTitle = detail.querySelector('.mockup-detail-title');
+  var detailBody = detail.querySelector('.mockup-detail-body');
 
   var current = null;
   var currentScale = 1.15;
@@ -448,10 +496,28 @@
   }
 
   function getExpandedScale(el) {
-    var availableHeight = window.innerHeight * 0.86;
+    var availableHeight = window.innerHeight * 0.82;
     var naturalHeight = el.offsetHeight || 665;
     var fitScale = availableHeight / naturalHeight;
-    return Math.min(1.25, Math.max(0.70, fitScale));
+    return Math.min(1.15, Math.max(0.65, fitScale));
+  }
+
+  // Composition math: phone + gap + detail card, centered as one unit,
+  // so the phone sits left-of-center rather than dead-center.
+  function layoutFor(block, scale) {
+    var phoneWidth = block.offsetWidth * scale;
+    var totalWidth = phoneWidth + DETAIL_GAP + DETAIL_WIDTH;
+    var vcx = window.innerWidth / 2;
+    var vcy = window.innerHeight / 2;
+    var phoneCenterX = vcx - (totalWidth / 2) + (phoneWidth / 2);
+    var detailLeft = phoneCenterX + (phoneWidth / 2) + DETAIL_GAP;
+    return { phoneCenterX: phoneCenterX, vcy: vcy, detailLeft: detailLeft };
+  }
+
+  function fillDetail(block){
+    detailEyebrow.textContent = block.querySelector('.screen-num').textContent + ' — ' + (block.dataset.detailEyebrow || '');
+    detailTitle.textContent = block.querySelector('.screen-title').textContent;
+    detailBody.textContent = block.dataset.detailBody || '';
   }
 
   async function expand(block){
@@ -459,45 +525,60 @@
     isAnimating = true;
     current = block;
 
-    // 1. Calculate target scale for perfect viewport fit
     currentScale = getExpandedScale(block);
     block.style.setProperty('--expanded-scale', currentScale.toFixed(3));
 
-    // 2. Measure unexpanded grid position
     var first = block.getBoundingClientRect();
     var fcx = first.left + first.width / 2;
     var fcy = first.top + first.height / 2;
 
-    // 3. Viewport center
+    var pos = layoutFor(block, currentScale);
     var vcx = window.innerWidth / 2;
     var vcy = window.innerHeight / 2;
 
-    var dx = fcx - vcx;
-    var dy = fcy - vcy;
+    var startDx = fcx - vcx;
+    var startDy = fcy - vcy;
+    var targetOffsetX = pos.phoneCenterX - vcx;
 
-    // 4. Switch to fixed center position
+    fillDetail(block);
+    detail.style.top = pos.vcy + 'px';
+    detail.style.left = pos.detailLeft + 'px';
+
+    block.style.setProperty('--phone-offset-x', targetOffsetX.toFixed(1) + 'px');
     block.classList.add('is-expanded');
     backdrop.classList.add('active');
 
     if (reduceMotion) {
+      detail.classList.add('visible');
+      detail.style.clipPath = 'inset(0 0% 0 0)';
+      detail.style.opacity = '1';
       isAnimating = false;
       return;
     }
 
-    // 5. Animate from grid position (scale 1.0) to centered expanded position (scale currentScale)
-    var controls = animate(
+    // 1. Phone slides from its grid position to the docked-left position
+    var phoneAnim = animate(
       block,
       {
         transform: [
-          'translate(calc(-50% + ' + dx.toFixed(1) + 'px), calc(-50% + ' + dy.toFixed(1) + 'px)) scale(1)',
-          'translate(-50%, -50%) scale(' + currentScale.toFixed(3) + ')'
+          'translate(calc(-50% + ' + startDx.toFixed(1) + 'px), calc(-50% + ' + startDy.toFixed(1) + 'px)) scale(1)',
+          'translate(calc(-50% + ' + targetOffsetX.toFixed(1) + 'px), -50%) scale(' + currentScale.toFixed(3) + ')'
         ]
       },
-      { type: 'spring', stiffness: 280, damping: 28 }
+      { type: 'spring', duration: 0.45, bounce: 0 }
     );
-
-    await controls.finished;
+    await phoneAnim.finished;
     block.style.transform = '';
+
+    // 2. Detail card rolls out from behind the phone, left edge first
+    detail.classList.add('visible');
+    var detailAnim = animate(
+      detail,
+      { clipPath: ['inset(0 100% 0 0)', 'inset(0 0% 0 0)'], opacity: [0, 1] },
+      { duration: 0.35, easing: [0.16, 1, 0.3, 1] }
+    );
+    await detailAnim.finished;
+
     isAnimating = false;
   }
 
@@ -511,39 +592,50 @@
     var vcx = window.innerWidth / 2;
     var vcy = window.innerHeight / 2;
     var activeScale = currentScale;
-
-    // 1. Remove fixed state -> reverts block back to grid layout
-    block.classList.remove('is-expanded');
+    var pos = layoutFor(block, activeScale);
 
     if (reduceMotion) {
+      detail.classList.remove('visible');
+      detail.style.opacity = '0';
+      detail.style.clipPath = 'inset(0 100% 0 0)';
+      block.classList.remove('is-expanded');
       block.style.removeProperty('--expanded-scale');
+      block.style.removeProperty('--phone-offset-x');
       isAnimating = false;
       return;
     }
 
-    // 2. Measure grid position
+    // 1. Detail card rolls back first
+    var detailAnim = animate(
+      detail,
+      { clipPath: ['inset(0 0% 0 0)', 'inset(0 100% 0 0)'], opacity: [1, 0] },
+      { duration: 0.25, easing: [0.4, 0, 1, 1] }
+    );
+    await detailAnim.finished;
+    detail.classList.remove('visible');
+
+    // 2. Phone slides back and reverts to its grid position
+    block.classList.remove('is-expanded');
     var last = block.getBoundingClientRect();
     var lcx = last.left + last.width / 2;
     var lcy = last.top + last.height / 2;
+    var startDx = pos.phoneCenterX - lcx;
+    var startDy = pos.vcy - lcy;
 
-    var dx = vcx - lcx;
-    var dy = vcy - lcy;
-
-    // 3. Animate from modal centered position (scale activeScale) to grid position (scale 1.0)
-    var controls = animate(
+    var phoneAnim = animate(
       block,
       {
         transform: [
-          'translate(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px) scale(' + activeScale.toFixed(3) + ')',
+          'translate(' + startDx.toFixed(1) + 'px, ' + startDy.toFixed(1) + 'px) scale(' + activeScale.toFixed(3) + ')',
           'translate(0px, 0px) scale(1)'
         ]
       },
-      { type: 'spring', stiffness: 280, damping: 28 }
+      { type: 'spring', duration: 0.45, bounce: 0 }
     );
-
-    await controls.finished;
+    await phoneAnim.finished;
     block.style.transform = '';
     block.style.removeProperty('--expanded-scale');
+    block.style.removeProperty('--phone-offset-x');
     isAnimating = false;
   }
 
@@ -556,6 +648,10 @@
     });
   });
 
+  detail.querySelector('.mockup-detail-close').addEventListener('click', function(e){
+    e.stopPropagation();
+    collapse();
+  });
   backdrop.addEventListener('click', collapse);
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') collapse();
@@ -566,6 +662,10 @@
     } else if (current) {
       currentScale = getExpandedScale(current);
       current.style.setProperty('--expanded-scale', currentScale.toFixed(3));
+      var pos = layoutFor(current, currentScale);
+      detail.style.top = pos.vcy + 'px';
+      detail.style.left = pos.detailLeft + 'px';
+      current.style.setProperty('--phone-offset-x', (pos.phoneCenterX - window.innerWidth / 2).toFixed(1) + 'px');
     }
   });
 </script>
