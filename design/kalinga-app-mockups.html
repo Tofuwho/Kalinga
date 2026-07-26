@@ -64,7 +64,8 @@
 
   .screen-block.is-expanded{
     position:fixed; top:50%; left:50%;
-    transform:translate(-50%,-50%) scale(1.25);
+    transform:translate(-50%,-50%) scale(var(--expanded-scale, 1.15));
+    transform-origin: center center;
     z-index:100; cursor:default;
   }
 
@@ -433,58 +434,112 @@
   document.body.appendChild(backdrop);
 
   var current = null;
+  var isAnimating = false;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function isDesktop(){
     return window.matchMedia('(min-width: 900px)').matches;
   }
 
-  // FLIP: measure before the class toggle, measure after, animate the visual
-  // delta as one continuous transform — position never jumps mid-animation.
-  async function flip(el, toggleFn){
-    var first = el.getBoundingClientRect();
-    toggleFn();
+  function getExpandedScale(el) {
+    var availableHeight = window.innerHeight * 0.86;
+    var naturalHeight = el.offsetHeight || 665;
+    var fitScale = availableHeight / naturalHeight;
+    return Math.min(1.25, Math.max(0.75, fitScale));
+  }
 
-    if (reduceMotion) return; // class change alone is enough, no motion needed
+  async function expand(block){
+    if (isAnimating) return;
+    isAnimating = true;
+    current = block;
 
-    var last = el.getBoundingClientRect();
-    var dx = (first.left + first.width / 2) - (last.left + last.width / 2);
-    var dy = (first.top + first.height / 2) - (last.top + last.height / 2);
+    var targetScale = getExpandedScale(block);
+    block.style.setProperty('--expanded-scale', targetScale);
+
+    var first = block.getBoundingClientRect();
+    var fcx = first.left + first.width / 2;
+    var fcy = first.top + first.height / 2;
+
+    block.classList.add('is-expanded');
+    backdrop.classList.add('active');
+
+    if (reduceMotion) {
+      isAnimating = false;
+      return;
+    }
+
+    var last = block.getBoundingClientRect();
+    var lcx = last.left + last.width / 2;
+    var lcy = last.top + last.height / 2;
+
+    var dx = fcx - lcx;
+    var dy = fcy - lcy;
     var ds = first.width / last.width;
 
     var controls = animate(
-      el,
-      { transform: [
-          'translate(' + dx + 'px, ' + dy + 'px) scale(' + ds + ')',
-          'translate(0px, 0px) scale(1)'
-        ] },
-      { type: 'spring', stiffness: 300, damping: 30 }
+      block,
+      {
+        transform: [
+          'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px)) scale(' + ds + ')',
+          'translate(-50%, -50%) scale(1)'
+        ]
+      },
+      { type: 'spring', stiffness: 280, damping: 28 }
     );
     await controls.finished;
-    el.style.transform = ''; // hand back to the CSS class's own transform
+    block.style.transform = '';
+    isAnimating = false;
   }
 
-  function expand(block){
-    if (current) return;
-    current = block;
-    flip(block, function(){ block.classList.add('is-expanded'); });
-    backdrop.classList.add('active');
-  }
-
-  function collapse(){
-    if (!current) return;
+  async function collapse(){
+    if (!current || isAnimating) return;
+    isAnimating = true;
     var block = current;
     current = null;
-    flip(block, function(){ block.classList.remove('is-expanded'); });
     backdrop.classList.remove('active');
+
+    var first = block.getBoundingClientRect();
+    var fcx = first.left + first.width / 2;
+    var fcy = first.top + first.height / 2;
+
+    block.classList.remove('is-expanded');
+
+    if (reduceMotion) {
+      block.style.removeProperty('--expanded-scale');
+      isAnimating = false;
+      return;
+    }
+
+    var last = block.getBoundingClientRect();
+    var lcx = last.left + last.width / 2;
+    var lcy = last.top + last.height / 2;
+
+    var dx = fcx - lcx;
+    var dy = fcy - lcy;
+    var ds = first.width / last.width;
+
+    var controls = animate(
+      block,
+      {
+        transform: [
+          'translate(' + dx + 'px, ' + dy + 'px) scale(' + ds + ')',
+          'translate(0px, 0px) scale(1)'
+        ]
+      },
+      { type: 'spring', stiffness: 280, damping: 28 }
+    );
+    await controls.finished;
+    block.style.transform = '';
+    block.style.removeProperty('--expanded-scale');
+    isAnimating = false;
   }
 
   document.querySelectorAll('.screen-block').forEach(function(block){
-    block.addEventListener('click', function(){
-      if (!isDesktop()) return; // mobile: click does nothing, plain scroll stays as-is
-      if (current === block){ collapse(); return; }
-      if (current) collapse();
-      expand(block);
+    block.addEventListener('click', async function(){
+      if (!isDesktop() || isAnimating) return;
+      if (current === block){ await collapse(); return; }
+      if (current) await collapse();
+      await expand(block);
     });
   });
 
@@ -493,7 +548,7 @@
     if (e.key === 'Escape') collapse();
   });
   window.addEventListener('resize', function(){
-    if (!isDesktop()) collapse(); // resizing down to mobile mid-view snaps back to grid
+    if (!isDesktop() && current) collapse();
   });
 </script>
 </body>
