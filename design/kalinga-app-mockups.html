@@ -66,11 +66,10 @@
     position:fixed; top:50%; left:50%;
     transform:translate(-50%,-50%) scale(1.25);
     z-index:100; cursor:default;
-    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
   }
 
   @media (prefers-reduced-motion: reduce){
-    .screen-block, .screen-block.is-expanded, .mockup-backdrop{ transition:none !important; }
+    .mockup-backdrop{ transition:none !important; }
   }
   .screen-label{
     text-align:center; margin-bottom:16px;
@@ -426,43 +425,76 @@
 
 </div>
 
-<script>
-  (function(){
-    var backdrop = document.createElement('div');
-    backdrop.className = 'mockup-backdrop';
-    document.body.appendChild(backdrop);
+<script type="module">
+  import { animate } from "https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm";
 
-    var current = null;
+  var backdrop = document.createElement('div');
+  backdrop.className = 'mockup-backdrop';
+  document.body.appendChild(backdrop);
 
-    function isDesktop(){
-      return window.matchMedia('(min-width: 900px)').matches;
-    }
+  var current = null;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function closeExpanded(){
-      if (current) current.classList.remove('is-expanded');
-      current = null;
-      backdrop.classList.remove('active');
-    }
+  function isDesktop(){
+    return window.matchMedia('(min-width: 900px)').matches;
+  }
 
-    document.querySelectorAll('.screen-block').forEach(function(block){
-      block.addEventListener('click', function(e){
-        if (!isDesktop()) return; // mobile: click does nothing, plain scroll stays as-is
-        if (current === block){ closeExpanded(); return; }
-        if (current) current.classList.remove('is-expanded');
-        block.classList.add('is-expanded');
-        current = block;
-        backdrop.classList.add('active');
-      });
+  // FLIP: measure before the class toggle, measure after, animate the visual
+  // delta as one continuous transform — position never jumps mid-animation.
+  async function flip(el, toggleFn){
+    var first = el.getBoundingClientRect();
+    toggleFn();
+
+    if (reduceMotion) return; // class change alone is enough, no motion needed
+
+    var last = el.getBoundingClientRect();
+    var dx = (first.left + first.width / 2) - (last.left + last.width / 2);
+    var dy = (first.top + first.height / 2) - (last.top + last.height / 2);
+    var ds = first.width / last.width;
+
+    var controls = animate(
+      el,
+      { transform: [
+          'translate(' + dx + 'px, ' + dy + 'px) scale(' + ds + ')',
+          'translate(0px, 0px) scale(1)'
+        ] },
+      { type: 'spring', stiffness: 300, damping: 30 }
+    );
+    await controls.finished;
+    el.style.transform = ''; // hand back to the CSS class's own transform
+  }
+
+  function expand(block){
+    if (current) return;
+    current = block;
+    flip(block, function(){ block.classList.add('is-expanded'); });
+    backdrop.classList.add('active');
+  }
+
+  function collapse(){
+    if (!current) return;
+    var block = current;
+    current = null;
+    flip(block, function(){ block.classList.remove('is-expanded'); });
+    backdrop.classList.remove('active');
+  }
+
+  document.querySelectorAll('.screen-block').forEach(function(block){
+    block.addEventListener('click', function(){
+      if (!isDesktop()) return; // mobile: click does nothing, plain scroll stays as-is
+      if (current === block){ collapse(); return; }
+      if (current) collapse();
+      expand(block);
     });
+  });
 
-    backdrop.addEventListener('click', closeExpanded);
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') closeExpanded();
-    });
-    window.addEventListener('resize', function(){
-      if (!isDesktop()) closeExpanded(); // resizing down to mobile mid-view snaps back to grid
-    });
-  })();
+  backdrop.addEventListener('click', collapse);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') collapse();
+  });
+  window.addEventListener('resize', function(){
+    if (!isDesktop()) collapse(); // resizing down to mobile mid-view snaps back to grid
+  });
 </script>
 </body>
 </html>
