@@ -533,13 +533,20 @@
     detail.style.opacity = '0';
   }
 
-  // Force-reset a block to clean grid state
+  // Force-reset a block to clean grid state without triggering CSS transitions
   function resetBlock(block){
+    // Suppress the CSS transition so removing is-expanded doesn't cause a stutter
+    block.style.transition = 'none';
     block.classList.remove('is-expanded');
     block.style.removeProperty('transform');
     block.style.removeProperty('--expanded-scale');
     block.style.removeProperty('--phone-offset-x');
-    block.style.cssText = block.style.cssText; // force style recalc
+    // Force the browser to apply the above synchronously
+    void block.offsetHeight;
+    // Re-enable CSS transitions on the next frame
+    requestAnimationFrame(function(){
+      block.style.removeProperty('transition');
+    });
   }
 
   // Remove placeholder from DOM
