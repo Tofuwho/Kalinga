@@ -48,6 +48,7 @@
     margin:0 auto;
   }
   .screen-block{ width:290px; }
+  .screen-block-placeholder{ width:290px; pointer-events:none; visibility:hidden; }
 
   @media (min-width: 900px){
     .screen-block{ cursor:pointer; transition: transform 0.25s ease; }
@@ -629,6 +630,7 @@
       { duration: 0.25, easing: [0.4, 0, 1, 1] }
     );
     await detailAnim.finished;
+    if (detailAnim && detailAnim.stop) detailAnim.stop();
     detail.classList.remove('visible');
     detail.style.clipPath = '';
     detail.style.opacity = '';
@@ -659,17 +661,25 @@
       { duration: 0.38, easing: [0.16, 1, 0.3, 1] }
     );
     await phoneAnim.finished;
+    if (phoneAnim && phoneAnim.stop) phoneAnim.stop();
 
-    // 3. Remove fixed positioning & placeholder after animation completes cleanly
-    block.classList.remove('is-expanded');
-    block.style.transform = '';
-    block.style.removeProperty('--expanded-scale');
-    block.style.removeProperty('--phone-offset-x');
-
+    // 3. Remove placeholder FIRST, then remove fixed positioning & clear transform inline styles
     if (placeholder && placeholder.parentNode) {
       placeholder.parentNode.removeChild(placeholder);
     }
     placeholder = null;
+
+    block.classList.remove('is-expanded');
+    block.style.transform = '';
+    block.style.removeProperty('transform');
+    block.style.removeProperty('--expanded-scale');
+    block.style.removeProperty('--phone-offset-x');
+
+    requestAnimationFrame(function(){
+      block.style.transform = '';
+      block.style.removeProperty('transform');
+    });
+
     isAnimating = false;
   }
 
