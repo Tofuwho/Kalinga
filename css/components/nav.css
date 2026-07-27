@@ -1,4 +1,24 @@
-/* Navigation Block */
+/*
+ * ============================================================
+ * NAVIGATION BAR
+ * ============================================================
+ *
+ * Fixed navbar showing "kalinga" on the left and the current Manila
+ * time on the right (populated by TimeScrubComponent.js).
+ *
+ * KEY TECHNIQUE: mix-blend-mode: difference
+ * The nav sits on top of the split-screen hero, which has a dark left
+ * half and a light right half. Instead of using separate text colors,
+ * mix-blend-mode: difference inverts the white text against whatever
+ * background is behind it, making it readable on both halves.
+ *
+ * pointer-events: none on the nav container prevents it from blocking
+ * clicks/taps on the hero content below. pointer-events: auto on the
+ * individual <span> elements re-enables interaction on the text itself.
+ *
+ * Safe-area padding ensures the nav isn't hidden behind notches or
+ * dynamic islands on modern phones.
+ */
 .nav {
   position: fixed;
   top: 0;
@@ -16,11 +36,13 @@
   font-size: clamp(11px, 1.4vw, 13px);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  mix-blend-mode: difference;
+  mix-blend-mode: difference;  /* Makes white text readable on both dark and light halves */
   color: #fff;
-  pointer-events: none;
+  pointer-events: none;  /* Pass clicks through to hero content below */
 }
 
+/* Re-enable click/tap on the actual nav text elements */
 .nav span {
   pointer-events: auto;
 }
+

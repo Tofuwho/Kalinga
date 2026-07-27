@@ -1,12 +1,39 @@
-/* Hero Split-Screen Block */
+/*
+ * ============================================================
+ * HERO — Split-Screen Dual Clock
+ * ============================================================
+ *
+ * The hero is the full-viewport centerpiece of the landing page.
+ * It splits the screen into two halves:
+ *   LEFT (desktop) / TOP (mobile):  Night side (Riyadh, parent's timezone)
+ *   RIGHT (desktop) / BOTTOM (mobile): Day side (Manila, child's timezone)
+ *
+ * CSS–JS BRIDGE:
+ * TimeScrubComponent.js writes two CSS custom properties on the .hero element:
+ *   --day-brightness   (0.0 to 1.0) — how bright Manila's sky should be
+ *   --night-brightness  (0.0 to 1.0) — how bright Riyadh's sky should be
+ * These drive the background gradients, star opacity, and sunray opacity
+ * in real time as the user scrubs through the 24-hour timeline.
+ *
+ * LAYOUT:
+ * Desktop (>640px): flex-direction: row (side by side)
+ * Mobile (≤640px):  flex-direction: column (stacked top/bottom)
+ * Both use 100dvh (dynamic viewport height) to account for mobile browser chrome.
+ */
 .hero {
   position: relative;
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100vh;   /* Fallback for browsers that don't support dvh */
+  min-height: 100dvh;  /* Accounts for mobile browser URL bar */
   display: flex;
   overflow: hidden;
 }
 
+/*
+ * Each half takes exactly 50% of the screen width (desktop) or height (mobile).
+ * Content is spaced between top (copy) and bottom (clock) using space-between.
+ * The max() with env(safe-area-inset) ensures content isn't hidden behind
+ * phone notches or rounded screen corners.
+ */
 .half {
   flex: 1;
   position: relative;
@@ -21,6 +48,19 @@
   z-index: 1;
 }
 
+/*
+ * DYNAMIC SKY BACKGROUNDS
+ * The color-mix() function blends the night/day base color with its opposite
+ * based on the brightness value set by JavaScript.
+ *
+ * Night half: normally deep navy. When Riyadh's brightness is high (daytime there),
+ *   up to 25% of the warm gold color bleeds in → making the sky look like dawn/dusk.
+ * Day half: normally warm gold. When Manila's brightness is low (nighttime there),
+ *   up to 30% of the navy color bleeds in → making the sky look like evening.
+ *
+ * The cubic-bezier(0.16, 1, 0.3, 1) is an "ease-out-expo" curve for a snappy
+ * entrance that decelerates smoothly.
+ */
 .half.night {
   background: linear-gradient(160deg,
     color-mix(in srgb, var(--night-1), var(--day-1) calc(var(--night-brightness, 0) * 25%)),
@@ -35,6 +75,15 @@
   animation: slide-in-right 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/*
+ * STAR FIELD (night half only)
+ * Pure CSS stars using radial-gradient dots at fixed positions.
+ * The opacity is dynamically driven by --night-brightness:
+ *   - When Riyadh is in nighttime (brightness ≈ 0): stars are visible (opacity ≈ 0.55)
+ *   - When Riyadh is in daytime (brightness ≈ 1): stars fade out (opacity ≈ 0)
+ * The ::before and ::after pseudo-elements add a second layer of stars
+ * with staggered twinkle animations for a realistic effect.
+ */
 .stars {
   position: absolute;
   inset: 0;
@@ -79,6 +128,12 @@
   50%      { opacity: 0.9; }
 }
 
+/*
+ * SUNRAY GLOW (day half only)
+ * A soft radial gradient in the upper-right corner that simulates sunlight.
+ * Opacity is driven by --day-brightness — fades out when Manila is in nighttime.
+ * The "breathe" animation creates a subtle pulsing glow effect.
+ */
 .sunrays {
   position: absolute;
   inset: 0;
@@ -190,7 +245,12 @@
 .night .day-label { color: #c7cff0; }
 .day .day-label { color: #5a3d0e; }
 
-/* Connecting Seam */
+/*
+ * ── CONNECTING SEAM ──
+ * The vertical line (desktop) or horizontal line (mobile) between the two halves.
+ * This contains the interactive time scrub slider, hour tick marks,
+ * the "Still there." tagline, and the "Back to live time" button.
+ */
 .seam {
   position: absolute;
   top: 0;
@@ -206,6 +266,7 @@
   gap: 12px;
 }
 
+/* "Still there." pill — glassmorphism style with backdrop-filter blur */
 .seam-text {
   font-family: var(--font-display);
   font-weight: 600;
@@ -220,11 +281,17 @@
   white-space: nowrap;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   opacity: 0;
-  animation: seam-fade-in 0.6s ease-out 0.85s both;
+  animation: seam-fade-in 0.6s ease-out 0.85s both;  /* Delayed entrance after hero halves slide in */
   pointer-events: none;
 }
 
-/* Seam Rail Hour Ticks */
+/*
+ * HOUR TICK MARKS
+ * Four time labels (00:00, 06:00, 12:00, 18:00) positioned along the seam.
+ * Desktop: vertically along the left side of the seam
+ * Mobile: horizontally along the top of the seam
+ * These help orient the user when dragging the time scrub slider.
+ */
 .seam-ticks {
   position: absolute;
   inset: 0;
@@ -242,6 +309,7 @@
   white-space: nowrap;
 }
 
+/* Desktop: ticks run vertically along the seam */
 @media (min-width: 641px) {
   .seam-tick[data-pct="0"]  { top: 6%; left: -26px; }
   .seam-tick[data-pct="25"] { top: 25%; left: -26px; }
@@ -249,6 +317,7 @@
   .seam-tick[data-pct="75"] { top: 75%; left: -26px; }
 }
 
+/* Mobile: ticks run horizontally along the seam */
 @media (max-width: 640px) {
   .seam-tick[data-pct="0"]  { left: 8%; top: -16px; }
   .seam-tick[data-pct="25"] { left: 25%; top: -16px; }
@@ -256,7 +325,20 @@
   .seam-tick[data-pct="75"] { left: 75%; top: -16px; }
 }
 
-/* Interactive Time Rail Slider */
+/*
+ * INTERACTIVE TIME SCRUB SLIDER
+ * An invisible hit area that extends 30px beyond the seam line in all directions
+ * to make it easy to grab on both desktop and mobile.
+ *
+ * opacity: 0 makes the slider itself invisible — the visible feedback is
+ * provided by the .scrub-thumb element below.
+ *
+ * touch-action: none prevents the browser from intercepting touch gestures
+ * (like scroll or pull-to-refresh) while the user is dragging the slider.
+ *
+ * JS INTERACTION: TimeScrubComponent.js listens for pointerdown/pointermove
+ * on this element and maps the pointer position to a minute value (0–1439).
+ */
 .time-scrub {
   position: absolute;
   inset: -20px -30px;
@@ -275,7 +357,14 @@
   cursor: grabbing;
 }
 
-/* Visible Seam Scrub Thumb */
+/*
+ * SCRUB THUMB — the visible white dot that tracks the user's drag position.
+ * Positioned by TimeScrubComponent.js via inline style (top/left percentages).
+ * pointer-events: none ensures it doesn't interfere with the slider hit area.
+ *
+ * HOVER/ACTIVE STATES: the box-shadow expands to give visual feedback.
+ * FOCUS-VISIBLE: keyboard users get a green focus ring for accessibility.
+ */
 .scrub-thumb {
   position: absolute;
   left: 50%;
@@ -301,7 +390,17 @@
   box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--green-dark);
 }
 
-/* Back to live time dark-glass pill button */
+/*
+ * "BACK TO LIVE TIME" BUTTON
+ * Appears when the user has scrubbed away from the current time.
+ * Clicking it returns both clocks to real-time mode.
+ * Uses the same glassmorphism style as .seam-text for visual consistency.
+ *
+ * The ::before pseudo-element creates a small amber pulsing dot (like a
+ * "live" indicator) to signal that tapping returns to real-time.
+ *
+ * JS: TimeScrubComponent.js toggles the [hidden] attribute.
+ */
 .back-to-now {
   position: relative;
   display: inline-flex;
@@ -324,6 +423,7 @@
   transition: border-color 0.2s ease, transform 0.15s ease;
 }
 
+/* Pulsing amber "live" dot before the button text */
 .back-to-now::before {
   content: '';
   width: 6px;
@@ -390,7 +490,20 @@
 
 
 
-/* Tablet & Mobile Breakpoints */
+/*
+ * ============================================================
+ * RESPONSIVE BREAKPOINTS
+ * ============================================================
+ *
+ * The hero adapts across 4 viewport tiers:
+ *   1. Desktop (>768px):   side-by-side halves, vertical seam
+ *   2. Tablet (641–768px): slightly smaller type, still side-by-side
+ *   3. Mobile (≤640px):    stacked halves, horizontal seam
+ *   4. Landscape mobile:   compressed typography for short viewports
+ *   5. Ultra-wide (≥1440px): larger type for 4K displays
+ */
+
+/* Tablet — slightly smaller hero type */
 @media (max-width: 768px) {
   .hero-title-part {
     font-size: clamp(1.8rem, 5vw, 2.8rem);
@@ -400,6 +513,13 @@
   }
 }
 
+/*
+ * MOBILE — the major layout shift.
+ * Halves stack vertically (column). Each gets 50dvh.
+ * The seam rotates from vertical to horizontal.
+ * Entrance animations change from left/right to top/bottom.
+ * Scroll cue is hidden (user naturally scrolls on mobile).
+ */
 @media (max-width: 640px) {
   .hero {
     flex-direction: column;
@@ -444,6 +564,7 @@
   .clock {
     font-size: clamp(1.8rem, 7vw, 2.4rem);
   }
+  /* Seam rotates to horizontal */
   .seam {
     left: 0;
     right: 0;
@@ -462,6 +583,7 @@
   }
 }
 
+/* Mobile entrance animations (top/bottom instead of left/right) */
 @keyframes slide-in-top {
   from { transform: translateY(-6%); opacity: 0; }
   to   { transform: translateY(0);   opacity: 1; }
@@ -472,10 +594,10 @@
   to   { transform: translateY(0);  opacity: 1; }
 }
 
-/* Landscape Mobile & Short Height Viewports */
+/* Landscape phones with very short viewports — compress everything */
 @media (max-height: 550px) and (orientation: landscape) {
   .hero {
-    min-height: 120vh;
+    min-height: 120vh;  /* Allow scrolling since both halves won't fit */
   }
   .celestial {
     top: 8px;
@@ -491,7 +613,7 @@
   }
 }
 
-/* Ultra-Wide Monitors & 4K Displays */
+/* Ultra-wide / 4K — scale up type for large screens */
 @media (min-width: 1440px) {
   .hero-title-part {
     font-size: 4.2rem;
@@ -502,7 +624,13 @@
   }
 }
 
-/* Accessibility: Global Reduced Motion Override */
+/*
+ * ACCESSIBILITY: Reduced Motion Override
+ * When the user's OS is set to "reduce motion", ALL hero animations
+ * are completely disabled. Elements are shown in their final state.
+ * The twinkling star pseudo-elements are hidden entirely since
+ * they serve no informational purpose.
+ */
 @media (prefers-reduced-motion: reduce) {
   .scroll-cue .line,
   .stars::before,
@@ -516,6 +644,7 @@
     opacity: 1 !important;
     transform: none !important;
   }
+  /* Hide twinkle layers — they're purely decorative */
   .stars::before,
   .stars::after {
     opacity: 0 !important;

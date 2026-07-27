@@ -1,12 +1,33 @@
-/* Main Stylesheet Entry Manifest */
+/*
+ * ============================================================
+ * KALINGA — Main Stylesheet Entry Manifest
+ * ============================================================
+ *
+ * This is the single CSS entry point loaded by index.html.
+ * All other stylesheets are imported here in dependency order:
+ *
+ *   1. fonts.css      — @font-face declarations for self-hosted Google Fonts
+ *   2. variables.css  — CSS custom properties (design tokens) used everywhere
+ *   3. base.css       — Global resets, body defaults, and utility classes
+ *   4. Components     — One file per visual section of the page
+ *
+ * WHY @import INSTEAD OF MULTIPLE <link> TAGS?
+ * Keeps index.html clean with a single stylesheet reference.
+ * For a landing page of this size (~30KB total CSS), the @import
+ * waterfall cost is negligible. For a production app at scale,
+ * these would be bundled into a single file by a build tool.
+ */
+
+/* Foundation Layers (must load first — other files depend on these) */
 @import url('./fonts.css');
 @import url('./variables.css');
 @import url('./base.css');
 
-/* Component Modules */
+/* Component Modules (one file per page section, order doesn't matter) */
 @import url('./components/nav.css');
 @import url('./components/hero.css');
 @import url('./components/gap.css');
 @import url('./components/features.css');
 @import url('./components/waitlist.css');
 @import url('./components/footer.css');
+

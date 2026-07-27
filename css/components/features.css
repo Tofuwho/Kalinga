@@ -1,10 +1,34 @@
-/* Features Block */
+/*
+ * ============================================================
+ * FEATURE HIGHLIGHTS SECTION
+ * ============================================================
+ *
+ * Displays the four core Kalinga features as icon + text rows.
+ * Each feature row has a grid layout: icon on the left, text on the right.
+ *
+ * ANIMATION (handled by ScrollRevealComponent.js):
+ * On page load, all .feature-row elements start invisible (opacity: 0,
+ * translateY: 28px — set by JS, not CSS). When each row scrolls into
+ * the viewport (25% visible), it fades in and slides up. The SVG icons
+ * inside .feature-icon also get a line-draw animation (stroke-dashoffset).
+ *
+ * SVG ICON DESIGN:
+ * Icons use stroke outlines instead of fills so that ScrollRevealComponent
+ * can animate the stroke-dashoffset for the "drawing" effect. The
+ * currentColor value inherits from .feature-icon { color: var(--green-dark) }.
+ */
+
 .features {
   padding: clamp(30px, 6vw, 60px) clamp(20px, 6vw, 64px) 20px;
   max-width: 980px;
   margin: 0 auto;
 }
 
+/*
+ * Each feature is a 2-column grid: [icon] [text content]
+ * The icon column is fixed-width; the text column takes remaining space.
+ * Rows are separated by thin border-top lines using the --line token.
+ */
 .feature-row {
   display: grid;
   grid-template-columns: clamp(40px, 6vw, 64px) 1fr;
@@ -14,10 +38,12 @@
   align-items: start;
 }
 
+/* Last row also gets a bottom border to close the visual list */
 .feature-row:last-child {
   border-bottom: 1px solid var(--line);
 }
 
+/* Icon container — fixed square, flexbox-centered, uses green accent color */
 .feature-icon {
   width: clamp(36px, 5vw, 44px);
   height: clamp(36px, 5vw, 44px);
@@ -25,7 +51,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--green-dark);
+  color: var(--green-dark);  /* SVG stroke="currentColor" inherits this */
 }
 
 .feature-icon svg {
@@ -33,6 +59,7 @@
   height: 100%;
 }
 
+/* Mono-font category label (e.g. "Shared Timeline", "Async Presence") */
 .feature-name {
   font-family: var(--font-mono);
   font-size: clamp(10px, 1.2vw, 11px);
@@ -42,6 +69,7 @@
   margin-bottom: 8px;
 }
 
+/* Display-font feature headline */
 .feature-title {
   font-family: var(--font-display);
   font-weight: 600;
@@ -49,6 +77,7 @@
   margin: 0 0 10px;
 }
 
+/* Feature description — secondary text color, max-width for readability */
 .feature-desc {
   font-size: clamp(0.9rem, 1.4vw, 1rem);
   line-height: 1.6;
@@ -56,6 +85,7 @@
   max-width: 560px;
 }
 
+/* Mobile: smaller grid gap and padding */
 @media (max-width: 480px) {
   .feature-row {
     grid-template-columns: 36px 1fr;
@@ -63,3 +93,4 @@
     padding: 24px 0;
   }
 }
+

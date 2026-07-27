@@ -1,4 +1,22 @@
-/* Narrative Gap Section Block */
+/*
+ * ============================================================
+ * NARRATIVE GAP SECTION
+ * ============================================================
+ *
+ * A centered, editorial-style text block between the hero and features.
+ * Sets the emotional context: "The distance is real."
+ *
+ * DESIGN INTENT:
+ * This section uses the Fraunces display font at a large size to
+ * create an editorial "pull quote" feel. The green-dark eyebrow
+ * above anchors it to the brand palette. The <strong> within the
+ * paragraph is styled italic+bold to emphasize the honest positioning:
+ * "Kalinga doesn't close that gap."
+ *
+ * The max-width: 760px keeps the text at a comfortable reading
+ * line length (~65-75 characters per line) for easy scanning.
+ */
+
 .gap {
   padding: clamp(48px, 12vw, 140px) clamp(20px, 6vw, 64px);
   max-width: 760px;
@@ -6,6 +24,7 @@
   text-align: center;
 }
 
+/* Mono-font label above the quote — matches the eyebrow style from the hero */
 .gap-eyebrow {
   font-family: var(--font-mono);
   font-size: clamp(10px, 1.3vw, 12px);
@@ -15,6 +34,7 @@
   margin-bottom: clamp(12px, 2vh, 18px);
 }
 
+/* Large display-font paragraph — reads like an editorial pull quote */
 .gap p {
   font-family: var(--font-display);
   font-weight: 400;
@@ -24,11 +44,13 @@
   margin: 0;
 }
 
+/* Emphasis on the key phrase — italic + bold for visual weight */
 .gap strong {
   font-weight: 600;
   font-style: italic;
 }
 
+/* Mobile: tighter padding and slightly smaller text */
 @media (max-width: 480px) {
   .gap {
     padding: 40px 20px;
@@ -38,3 +60,4 @@
     line-height: 1.45;
   }
 }
+

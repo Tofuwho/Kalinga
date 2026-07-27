@@ -1,27 +1,69 @@
+/*
+ * ============================================================
+ * DESIGN TOKENS — CSS Custom Properties
+ * ============================================================
+ *
+ * All colors, fonts, and spacing values used across the app are
+ * defined here as CSS custom properties (variables). This ensures
+ * visual consistency and makes it easy to update the palette in
+ * one place.
+ *
+ * NAMING CONVENTION:
+ * --{category}-{variant}
+ *   category: night, day, paper, ink, green, font
+ *   variant:  1 (primary), 2 (secondary), glow (accent), soft (muted), dark (darker)
+ */
 :root {
-  /* Dark / Night Palette */
+  /* ── Night / Dark Palette ──
+   * Used by: .half.night background, .stars, .seam-text, nav blend
+   * night-1: deep navy (primary background)
+   * night-2: lighter navy (gradient endpoint)
+   * night-glow: soft blue for subtle glow effects
+   */
   --night-1: #131b32;
   --night-2: #243256;
   --night-glow: #5b6fa8;
 
-  /* Warm / Day Palette */
+  /* ── Day / Warm Palette ──
+   * Used by: .half.day background, .sunrays, clock colors
+   * day-1: warm gold (primary background)
+   * day-2: deeper amber (gradient endpoint, also used in .back-to-now pulse dot)
+   * day-glow: pale cream for sunray radial gradient
+   */
   --day-1: #f4c669;
   --day-2: #e8a33d;
   --day-glow: #fff3d6;
 
-  /* Neutral Paper & Ink Tokens */
+  /* ── Neutral Paper & Ink Tokens ──
+   * Used by: body background, text colors, section borders
+   * paper: warm off-white (main page background)
+   * paper-2: slightly darker off-white (waitlist section gradient)
+   * ink: near-black green-tinted dark (primary text)
+   * ink-soft: muted gray-green (secondary text, descriptions)
+   * line: semi-transparent border color (feature row dividers)
+   */
   --paper: #f1ead9;
   --paper-2: #e8dfc9;
   --ink: #1f2823;
   --ink-soft: #5a6459;
   --line: rgba(31, 40, 35, 0.14);
 
-  /* Accent Green Tokens */
+  /* ── Accent Green Tokens ──
+   * Used by: waitlist submit button, feature icons, focus outlines
+   * green: primary action color (button background)
+   * green-dark: hover state and focus ring color
+   */
   --green: #5c7a52;
   --green-dark: #455e3d;
 
-  /* Typography Families */
+  /* ── Typography Families ──
+   * All three fonts are self-hosted (see fonts.css) for offline reliability.
+   * font-display: Fraunces (serif) — headlines, hero titles, feature titles
+   * font-body: Public Sans (sans) — body text, descriptions, paragraphs
+   * font-mono: IBM Plex Mono — eyebrows, labels, clocks, navigation, buttons
+   */
   --font-display: 'Fraunces', serif;
   --font-body: 'Public Sans', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
 }
+

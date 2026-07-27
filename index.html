@@ -2,11 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
+  <!--
+    VIEWPORT CONFIGURATION
+    - width=device-width: scales to the device's screen width
+    - initial-scale=1.0: no zoom on load
+    - viewport-fit=cover: extends content into safe areas on notched phones (iPhone X+)
+      This works together with env(safe-area-inset-*) in CSS to handle notch/home-bar padding.
+  -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Kalinga — Their morning. Your midnight. Still there.</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-  <!-- SEO & Social Media Link Previews (Open Graph / Messenger / Viber / Twitter) -->
+  <!--
+    SEO & SOCIAL MEDIA LINK PREVIEWS
+    These meta tags control how the page looks when shared on:
+    - Facebook / Messenger (og: tags)
+    - Viber link previews (og: tags)
+    - Twitter / X (twitter: tags)
+    - iMessage link previews (og: tags)
+    - Line, WhatsApp, Telegram (og: tags)
+
+    IMPORTANT: og:image and twitter:image use ABSOLUTE URLs because social
+    media crawlers fetch these from their own servers, not from the user's browser.
+    Relative paths would break the preview image.
+  -->
   <meta name="description" content="A bedtime story recorded on your break in Riyadh lands exactly at bedtime in Manila — on their clock, not yours. Kalinga is built for families keeping the distance.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tofuwho.github.io/Kalinga/">
@@ -18,15 +38,40 @@
   <meta name="twitter:description" content="A bedtime story recorded on your break in Riyadh lands exactly at bedtime in Manila — on their clock, not yours.">
   <meta name="twitter:image" content="https://tofuwho.github.io/Kalinga/Kalinga-photo.png">
 
-  <!-- Anime.js Animation Engine -->
+  <!--
+    ANIME.JS — Animation Engine (v3.2.1)
+    Used for: scroll-reveal animations on feature rows, SVG icon line-draws,
+    and the animated signup counter in the waitlist section.
+
+    Loaded via CDN with Subresource Integrity (SRI) hash for security.
+    If the CDN fails, all JS components have graceful fallbacks that
+    set elements to their final visible state without animation.
+
+    NOTE: For fieldwork in areas with poor internet, consider downloading
+    this file and serving it locally from a /lib/ folder.
+  -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
-  <!-- Central CSS Manifest -->
+  <!--
+    CENTRAL CSS MANIFEST
+    styles.css is the single entry point that @import-chains all other stylesheets.
+    Load order: fonts → variables → base → nav → hero → gap → features → waitlist → footer
+    See css/styles.css for the full import map.
+  -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <!-- Navigation -->
+  <!--
+    ==========================================
+    NAVIGATION BAR
+    ==========================================
+    Fixed to the top of the viewport. Uses mix-blend-mode: difference so the
+    white text remains readable on both the dark (night) and light (day) hero halves.
+    
+    #nav-time is populated by TimeScrubComponent.js with the current Manila time
+    (e.g. "08:30 MNL") and updates every second in live mode.
+  -->
   <nav class="nav">
     <span>kalinga</span>
     <span id="nav-time"></span>
@@ -34,11 +79,52 @@
 
   <!-- Main Content Area -->
   <main>
-    <!-- Hero Section -->
+
+    <!--
+      ==========================================
+      HERO SECTION — Split-Screen Dual Clock
+      ==========================================
+      This is the centerpiece of the landing page. It's a full-viewport split screen
+      showing two cities side by side (or stacked on mobile):
+
+        LEFT (desktop) / TOP (mobile):  Riyadh — the OFW parent's night side
+        RIGHT (desktop) / BOTTOM (mobile): Manila — the child's day side
+
+      DESIGN INTENT:
+      The split screen visually demonstrates the timezone gap that Kalinga addresses.
+      When a visitor sees "11:47 PM" next to "4:47 AM", the product concept clicks
+      instantly — no explanation needed.
+
+      KEY BEHAVIORS (powered by TimeScrubComponent.js):
+      1. Both clocks tick in real time (1-second interval)
+      2. Sky backgrounds dynamically brighten/darken based on local time via
+         CSS custom properties (--day-brightness, --night-brightness)
+      3. The seam divider contains an interactive slider that lets users scrub
+         through 24 hours to see how the two timezones relate at any hour
+
+      ACCESSIBILITY:
+      - The <h1> is visually hidden but present for screen readers and SEO
+      - The time scrub slider has role="slider" with full ARIA attributes
+      - All animations respect prefers-reduced-motion: reduce
+    -->
     <section class="hero">
+      <!-- Hidden h1 for SEO and screen readers — visible title is split across the two halves -->
       <h1 class="visually-hidden">Kalinga — Their morning. Your midnight. Still there.</h1>
 
-      <!-- Night Half (Riyadh) -->
+      <!--
+        NIGHT HALF — Riyadh (Parent's Side)
+        Background: dark blue gradient that brightens slightly when the time scrub
+        shows daytime hours in Riyadh (controlled by --night-brightness CSS variable)
+        
+        .stars — CSS-only star field using radial-gradient dots, with ::before/::after
+                  pseudo-elements for a twinkling animation effect
+        .celestial — Crescent moon SVG icon, positioned top-right
+        .city-block — Contains the live clock and date for Riyadh (UTC+3)
+        
+        Element IDs consumed by TimeScrubComponent.js:
+          #clock-night → displays Riyadh time (e.g. "11:47 PM")
+          #date-night  → displays Riyadh date (e.g. "Sunday, Jul 27")
+      -->
       <div class="half night">
         <div class="stars"></div>
         <svg class="celestial" viewBox="0 0 64 64" fill="none">
@@ -57,7 +143,24 @@
         </div>
       </div>
 
-      <!-- Connecting Seam Divider -->
+      <!--
+        CONNECTING SEAM DIVIDER
+        The vertical (desktop) or horizontal (mobile) line between the two halves.
+        This is more than decoration — it contains an interactive time scrub slider.
+
+        HOW THE TIME SCRUB WORKS:
+        1. User drags along the seam (or uses arrow keys)
+        2. Drag position maps to a minute value (0–1439, representing 24 hours)
+        3. TimeScrubComponent.js recalculates both clocks, dates, and sky brightness
+        4. A "Back to live time" button appears to return to real-time mode
+
+        LAYOUT:
+        - .time-scrub: invisible hit area (extended 30px beyond the seam line for easy grabbing)
+        - .seam-ticks: 4 hour markers (00:00, 06:00, 12:00, 18:00) for orientation
+        - .scrub-thumb: the visible white dot that follows the drag position
+        - .seam-text: "Still there." tagline (the connecting message between the two halves)
+        - .back-to-now: pill button that resets to live time (hidden by default)
+      -->
       <div class="seam">
         <div class="time-scrub" id="time-scrub" role="slider" aria-label="Explore any hour of the day" tabindex="0"></div>
         <div class="seam-ticks" aria-hidden="true">
@@ -71,7 +174,18 @@
         <button type="button" class="back-to-now" id="back-to-now" hidden>Back to live time</button>
       </div>
 
-      <!-- Day Half (Manila) -->
+      <!--
+        DAY HALF — Manila (Child's Side)
+        Background: warm amber/gold gradient that darkens when the time scrub
+        shows nighttime hours in Manila (controlled by --day-brightness CSS variable)
+        
+        .sunrays — CSS radial gradient overlay that pulses with a breathing animation
+        .celestial — Sun SVG icon with 8 radiating lines
+        
+        Element IDs consumed by TimeScrubComponent.js:
+          #clock-day → displays Manila time (e.g. "04:47 AM")
+          #date-day  → displays Manila date (e.g. "Monday, Jul 28")
+      -->
       <div class="half day">
         <div class="sunrays"></div>
         <svg class="celestial" viewBox="0 0 64 64" fill="none">
@@ -96,21 +210,49 @@
         </div>
       </div>
 
+      <!-- Scroll indicator — hidden on mobile (≤640px) via CSS, pulses to invite scrolling -->
       <div class="scroll-cue">
         <span>Scroll</span>
         <span class="line"></span>
       </div>
     </section>
 
-    <!-- Narrative Gap Section -->
+    <!--
+      ==========================================
+      NARRATIVE GAP SECTION
+      ==========================================
+      Transitional copy block between the hero and the features.
+      Sets the emotional context: millions of OFW families live with this timezone gap daily.
+      The key line — "Kalinga doesn't close that gap" — is intentionally honest
+      to avoid overpromising what the app does.
+    -->
     <section class="gap">
       <div class="gap-eyebrow">The distance is real</div>
       <p>Millions of Filipino parents work a full day away in time zone alone, before the plane ticket ever enters the picture. <strong>Kalinga doesn't close that gap</strong> — it just makes sure your presence still arrives on schedule.</p>
     </section>
 
-    <!-- Feature Highlights -->
+    <!--
+      ==========================================
+      FEATURE HIGHLIGHTS
+      ==========================================
+      Four core features displayed as icon + text rows.
+      Each .feature-row is observed by ScrollRevealComponent.js which triggers:
+        1. A fade-up entrance animation (opacity 0→1, translateY 28→0)
+        2. An SVG line-draw animation on the feature icon
+      
+      The features map directly to the product roadmap in design/kalinga-feature-roadmap.md:
+        1. Shared Timeline  → Roadmap Block 1
+        2. Async Presence   → Roadmap Block 2
+        3. Find Your Words  → Roadmap Block 3
+        4. Honest Presence  → Roadmap Block 4
+      
+      Each icon is a hand-coded SVG using stroke outlines (not fills) so the
+      ScrollRevealComponent can animate stroke-dashoffset for the line-draw effect.
+    -->
     <section class="features">
       <h2 class="visually-hidden">Core Features</h2>
+
+      <!-- Feature 1: Shared Timeline — the foundation feature, ships first -->
       <div class="feature-row">
         <div class="feature-icon">
           <svg viewBox="0 0 44 44" fill="none">
@@ -126,6 +268,7 @@
         </div>
       </div>
 
+      <!-- Feature 2: Async Presence — the core differentiator -->
       <div class="feature-row">
         <div class="feature-icon">
           <svg viewBox="0 0 44 44" fill="none">
@@ -140,6 +283,7 @@
         </div>
       </div>
 
+      <!-- Feature 3: Find Your Words — AI nudge, not AI replacement -->
       <div class="feature-row">
         <div class="feature-icon">
           <svg viewBox="0 0 44 44" fill="none">
@@ -154,6 +298,7 @@
         </div>
       </div>
 
+      <!-- Feature 4: Honest Presence — anti-alibi design, ships last -->
       <div class="feature-row">
         <div class="feature-icon">
           <svg viewBox="0 0 44 44" fill="none">
@@ -169,12 +314,32 @@
       </div>
     </section>
 
-    <!-- Early Access Waitlist -->
+    <!--
+      ==========================================
+      EARLY ACCESS WAITLIST
+      ==========================================
+      Email capture form for interested OFW families.
+      
+      DATA FLOW (managed by WaitlistComponent.js):
+      1. User enters email and submits
+      2. Email is FIRST saved to localStorage as a backup (never lost)
+      3. Email is THEN sent to a Google Apps Script endpoint that writes to a Google Sheet
+      4. Signup count increments in localStorage and animates on screen
+      
+      The data-endpoint attribute on the <form> is auto-detected by WaitlistComponent.js
+      as the remote API URL. The form action="#" prevents native form submission —
+      JavaScript handles everything via fetch().
+      
+      #waitlist-status: shows "Adding you…", "You're on the list, #N", or error messages
+      #waitlist-count: shows "N parents have joined so far" with animated count-up
+      
+      aria-live="polite" on #waitlist-status ensures screen readers announce status changes.
+    -->
     <section class="waitlist">
       <div class="waitlist-inner">
         <h2>Be first to try it</h2>
         <p>Kalinga is still being built and tested with OFW families. Leave your email and we'll reach out when early access opens.</p>
-        <!-- Deployed Google Apps Script Endpoint for Google Sheets Data Collection -->
+        <!-- Google Apps Script endpoint → writes to a Google Sheet for email collection -->
         <form class="waitlist-form" id="waitlist-form" action="#" data-endpoint="https://script.google.com/macros/s/AKfycbwNNIlPTg0UxQ3ytCjPT-dqhY2ihkrSHmsBzZTgrrLMRFPSpSO6XbnPba6ByV0jCv_JWg/exec">
           <input type="email" id="waitlist-email" placeholder="you@email.com" required aria-label="Email address">
           <button type="submit" id="waitlist-submit">Join the list</button>
@@ -186,10 +351,15 @@
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer — simple branding tagline -->
   <footer>kalinga · built for families keeping the distance, not letting it win</footer>
 
-  <!-- Application Entry Point (ES Modules) -->
+  <!--
+    APPLICATION ENTRY POINT
+    type="module" enables ES module imports (import/export syntax).
+    app.js bootstraps all services and components on DOMContentLoaded.
+    See js/app.js for the initialization flow.
+  -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

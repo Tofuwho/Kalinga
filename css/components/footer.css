@@ -1,4 +1,15 @@
-/* Footer Block */
+/*
+ * ============================================================
+ * FOOTER
+ * ============================================================
+ *
+ * Simple centered tagline at the bottom of the page.
+ * Uses the mono font at a small size to match the eyebrow/label
+ * style used throughout the site.
+ *
+ * Safe-area padding ensures the footer text isn't hidden behind
+ * the home indicator bar on phones with gesture navigation.
+ */
 footer {
   padding: 24px clamp(20px, 6vw, 64px) 40px;
   padding-bottom: max(40px, env(safe-area-inset-bottom));
@@ -10,3 +21,4 @@ footer {
   text-transform: uppercase;
   line-height: 1.5;
 }
+

@@ -1,4 +1,30 @@
-/* Waitlist Section Block */
+/*
+ * ============================================================
+ * WAITLIST SECTION — Email Capture
+ * ============================================================
+ *
+ * Email signup form for early access interest from OFW families.
+ *
+ * LAYOUT:
+ * - Centered container (max-width: 520px) with a subtle gradient background
+ * - Email input + submit button in a row (desktop) or stacked column (mobile)
+ * - Status message area below for feedback ("Adding you…", "You're on the list")
+ * - Animated signup counter at the bottom
+ *
+ * JS INTERACTION (WaitlistComponent.js):
+ * - Intercepts form submit, prevents default
+ * - Validates email, saves to localStorage as backup
+ * - POSTs to Google Apps Script endpoint (from form data-endpoint attribute)
+ * - Updates #waitlist-status with success/error messages
+ * - Animates #waitlist-count with a count-up tween
+ *
+ * ACCESSIBILITY:
+ * - aria-label on the email input (no visible <label> due to placeholder design)
+ * - aria-live="polite" on status div so screen readers announce changes
+ * - min-height: 48px on input/button for touch target compliance (WCAG 2.5.5)
+ */
+
+/* Section container — gradient from paper-2 to paper for visual separation */
 .waitlist {
   background: linear-gradient(180deg, var(--paper-2), var(--paper));
   padding: clamp(48px, 12vw, 130px) clamp(20px, 6vw, 64px);
@@ -6,11 +32,13 @@
   text-align: center;
 }
 
+/* Centered content wrapper */
 .waitlist-inner {
   max-width: 520px;
   margin: 0 auto;
 }
 
+/* Section heading */
 .waitlist h2 {
   font-family: var(--font-display);
   font-weight: 600;
@@ -18,6 +46,7 @@
   margin: 0 0 12px;
 }
 
+/* Description text */
 .waitlist p {
   color: var(--ink-soft);
   font-size: clamp(0.9rem, 1.4vw, 1rem);
@@ -25,6 +54,7 @@
   margin: 0 0 30px;
 }
 
+/* Form row — flex layout wraps on narrow screens */
 .waitlist-form {
   display: flex;
   gap: 10px;
@@ -33,9 +63,14 @@
   align-items: center;
 }
 
+/*
+ * Email input — uses appearance: none to reset browser default styling.
+ * The flex: 1 1 240px means it grows to fill space but has a minimum
+ * width of 240px before wrapping to its own line.
+ */
 .waitlist-form input[type="email"] {
   flex: 1 1 240px;
-  min-height: 48px;
+  min-height: 48px;  /* Touch target size (WCAG 2.5.5) */
   padding: 14px 16px;
   border-radius: 2px;
   border: 1px solid var(--line);
@@ -47,12 +82,18 @@
   appearance: none;
 }
 
+/* Focus state — uses the green accent to match the submit button */
 .waitlist-form input[type="email"]:focus {
   border-color: var(--green-dark);
 }
 
+/*
+ * Submit button — green background, uppercase mono text.
+ * -webkit-tap-highlight-color: transparent removes the blue flash
+ * that appears on tap in some mobile browsers.
+ */
 .waitlist-form button {
-  min-height: 48px;
+  min-height: 48px;  /* Touch target size */
   padding: 14px 26px;
   border-radius: 2px;
   border: none;
@@ -72,11 +113,13 @@
   background: var(--green-dark);
 }
 
+/* Disabled during form submission to prevent double-submit */
 .waitlist-form button:disabled {
   opacity: 0.6;
   cursor: default;
 }
 
+/* Privacy disclaimer — small muted text below the form */
 .waitlist-privacy {
   margin: 12px 0 0;
   font-size: clamp(0.75rem, 1.1vw, 0.825rem) !important;
@@ -84,12 +127,18 @@
   opacity: 0.85;
 }
 
+/*
+ * Status message area — shows submission feedback.
+ * Content is set dynamically by WaitlistComponent.js.
+ * Default color: green-dark for success messages.
+ * .error class: switches to red for validation/network errors.
+ */
 .waitlist-status {
   margin-top: 16px;
   font-family: var(--font-mono);
   font-size: clamp(12px, 1.3vw, 13px);
   color: var(--green-dark);
-  min-height: 20px;
+  min-height: 20px;  /* Prevents layout shift when content appears */
   transition: color 0.2s ease;
 }
 
@@ -97,6 +146,11 @@
   color: #b93829;
 }
 
+/*
+ * Signup counter — shows "N parents have joined so far".
+ * The number animates via Anime.js count-up tween in WaitlistComponent.js.
+ * Currently reads from localStorage (per-browser), not a global server count.
+ */
 .waitlist-count {
   margin-top: 36px;
   font-family: var(--font-mono);
@@ -105,6 +159,7 @@
   letter-spacing: 0.04em;
 }
 
+/* Mobile: stack input and button vertically, full-width */
 @media (max-width: 480px) {
   .waitlist-form {
     flex-direction: column;
@@ -116,3 +171,4 @@
     flex: none;
   }
 }
+
