@@ -1,3 +1,41 @@
+/*
+ * ============================================================
+ * SELF-HOSTED GOOGLE FONTS
+ * ============================================================
+ *
+ * All three typeface families used by Kalinga are self-hosted as
+ * WOFF2 files in the ./fonts/ directory. This means the site
+ * works fully offline with no CDN dependency — critical for
+ * fieldwork demonstrations where internet may be unreliable.
+ *
+ * TYPEFACES:
+ *
+ *   1. Fraunces (Serif, Variable Optical Size)
+ *      Weights: 300 (light), 400 (regular), 600 (semibold)
+ *      Usage:   Hero titles, section headings, gap quote, feature titles
+ *      Style:   Warm, editorial, slightly quirky — gives the brand personality
+ *
+ *   2. IBM Plex Mono (Monospace)
+ *      Weights: 400 (regular), 500 (medium)
+ *      Usage:   Navigation, eyebrow labels, buttons, clock displays, footer
+ *      Style:   Clean, technical — provides contrast against the serif headlines
+ *
+ *   3. Public Sans (Sans-Serif)
+ *      Weights: 400 (regular), 600 (semibold)
+ *      Usage:   Body text, descriptions, form inputs
+ *      Style:   Neutral, highly legible — US Web Design System typeface
+ *
+ * UNICODE SUBSETTING:
+ * Each font is split into unicode-range subsets (vietnamese, latin-ext,
+ * latin, cyrillic-ext). The browser only downloads the subset files
+ * needed for the characters on the page. For Filipino/English content,
+ * typically only the "latin" subset loads (~15-30KB per weight).
+ *
+ * font-display: swap ensures text is visible immediately using a
+ * fallback system font, then swaps to the custom font once loaded.
+ * This prevents invisible text during font loading (FOIT).
+ */
+
 /* vietnamese */
 @font-face {
   font-family: 'Fraunces';
